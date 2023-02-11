@@ -1,60 +1,35 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/compat/auth'
-import {
-  AngularFirestore,
-  AngularFirestoreDocument
-} from '@angular/fire/compat/firestore'
 
 import auth from 'firebase/compat/app'
 
 import { Observable, of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { UserData, Roles } from './user-data';
-import { EmailAuthProvider, getAuth, GoogleAuthProvider, onAuthStateChanged, User } from 'firebase/auth';
-import { async } from '@firebase/util';
 import { ImpossibleLevel } from './impossible-level';
-import { user } from '@angular/fire/auth';
 
+import Pocketbase from 'pocketbase'
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  user$: Observable<UserData | null | undefined>;
+  user$: Observable<UserData | undefined | null>;
   userArr: UserData[] = [];
 
   constructor(
-    private afAuth: AngularFireAuth,
-    public firestore: AngularFirestore,
+    public pb: Pocketbase,
     private router: Router
   ) {
-    this.user$ = this.afAuth.authState.pipe(
-      switchMap(user => {
-        if (user) {
-          return this.firestore.doc<UserData>(`user/${user.uid}`).valueChanges()
-        } else {
-          return of(null);
-        }
-      })
-    )
+    this.user$ = of(this.pb.authStore.model)
+
+    pb.authStore.onChange((auth) => {
+      this.user$ = of(this.pb.authStore.model)
+    })
   }
 
   signIn(email: string, password: string) {
-    return this.afAuth.signInWithEmailAndPassword(email, password)
-  }
-
-  loginAsAdmin(email: string, password: string) {
-    this.afAuth.signInWithEmailAndPassword(email, password).then(res => {
-      const data: UserData = {
-        uid: res.user?.uid,
-        email: email,
-        roles: { admin: true, reader: true }
-      }
-      this.firestore.collection('user').doc(data.uid).set(data, { merge: true })
-    }).catch(err => {
-      console.log(err)
-    })
+    return this.pb.collection('users').authWithPassword(email, password)
   }
 
   createAccount(username: string, email: string, password: string) {
@@ -68,41 +43,23 @@ export class AuthService {
       'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_7.png?alt=media&token=ee553070-5010-4013-82b3-98ecb69bc3fc',
     ];
 
-    return this.afAuth.createUserWithEmailAndPassword(email, password).then(res => {
-      const data: UserData = {
-        uid: res.user?.uid,
-        username: username,
-        gd_username: '',
-        email: email,
-        roles: { admin: false, reader: true },
-        ill_points: 0,
-        description: '',
-        profilePicture: _default_pfps[Math.round(Math.random() * (_default_pfps.length-1))],
-        created_levels: 0,
-        badges: ['Member'],
-        show_in_leaderboards: false,
-      }
-      this.firestore.collection('user').doc(data.uid).set(data, { merge: true });
-      console.log('Successfully created account: ', email);
-    })
-  }
-
-  createAdminAccount(email: string, password: string) {
-    this.afAuth.createUserWithEmailAndPassword(email, password).then(res => {
-      const data: UserData = {
-        uid: res.user?.uid,
-        email: email,
-        roles: { admin: true, reader: true }
-      }
-      this.firestore.collection('user').doc(data.uid).set(data);
-      console.log('Successfully created admin account: ', email);
-    }).catch(err => {
-      console.log(err);
-    })
+    const data: UserData = {
+      username: username,
+      gd_username: '',
+      permissions: 'member',
+      illp_points: 0,
+      description: '',
+      profilePicture: _default_pfps[Math.round(Math.random() * (_default_pfps.length-1))],
+      created_levels: 0,
+      badges: ['Member'],
+      show_in_leaderboards: false,
+    }
+    this.pb.collection('users').create(data)
+    this.pb.collection('users').authWithPassword(email, password)
   }
 
   signOut() {
-    this.afAuth.signOut();
+    this.pb.authStore.clear();
   }
 
   isCurrentUserAdmin() {
@@ -112,33 +69,16 @@ export class AuthService {
   }
 
   async getAllUsers() {
-    return this.firestore.collection('user').ref.get();
+    return this.pb.collection('user').getFullList<UserData>(200);
   }
 
   async getDataFromGDUsername(username: string) {
-    let _arr: UserData[] = [];
-    await this.firestore.collection('user').ref.where('gd_username', '==', username).get().then((snapshot: any) => {
-      _arr = snapshot.docs.map((e: any) => {
-        const data = e.data();
-        return data;
-      })
-    })
-
-    if (_arr.length > 0) {
-      return _arr[0];
-    } else {
-      return null;
-    }
+    return await this.pb.collection('user').getFirstListItem<UserData>("gd_username = '"+username+"'")
   }
 
   async getDataFromUID(uid: string) {
     let _arr: UserData[] = [];
-    await this.firestore.collection('user').ref.where('uid', '==', uid).get().then((snapshot: any) => {
-      _arr = snapshot.docs.map((e: any) => {
-        const data = e.data();
-        return data;
-      })
-    })
+    await this.pb.collection('users').getFirstListItem(" id = '2wtntoh7dx0y28q' ")
 
     if (_arr.length > 0) {
       return _arr[0];

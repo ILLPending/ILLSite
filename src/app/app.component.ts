@@ -1,6 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app'
 import { AuthService } from './shared/auth.service';
 import { UserData } from './shared/user-data';
@@ -19,7 +17,6 @@ import { LevelServiceService } from './shared/level-service.service';
 })
 export class AppComponent implements OnInit {
   constructor (
-    public afAuth: AngularFireAuth,
     public authService: AuthService,
     public router: Router,
     public ill_service: LevelServiceService

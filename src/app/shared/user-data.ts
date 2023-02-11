@@ -6,8 +6,7 @@ export interface Roles {
 export interface UserData {
     //Base info that is required
     uid?: string;
-    email: string;
-    roles: Roles;
+    permissions: string;
     username?: string;
 
     //Profile info that is optional
@@ -16,13 +15,8 @@ export interface UserData {
     profilePicture?: string; //url to a pfp. Limited to 1mb
     badges?: string[]; //basically roles like list mod, list helper, botter and etc.
 
-    //sloomy
-    sloomish_points?:number;
-    people_find_sloomish?:string[];
-    people_find_not_sloomish?:string[];
-
     //ILLP related things
-    ill_points?: number;
+    illp_points?: number;
     bottedLevels_name?: string[];
     bottedLevels_creator?: string[];
     completed_bundles_name?: string[];

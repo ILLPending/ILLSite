@@ -14,12 +14,6 @@ import { LoginPageComponent } from './profiles-and-login/login-page/login-page.c
 
 //Firebase setup
 import { environment } from 'src/environments/environment';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireDatabaseModule } from '@angular/fire/compat/database'
-import { FirestoreModule, provideFirestore, getFirestore } from '@angular/fire/firestore';
-import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
-import { provideAuth,getAuth } from '@angular/fire/auth';
-import { provideDatabase,getDatabase } from '@angular/fire/database';
 
 //Import services
 import { LevelServiceService } from 'src/app/shared/level-service.service';
@@ -77,18 +71,11 @@ import { AdsenseModule } from 'ng2-adsense';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireDatabaseModule,
-    FirestoreModule,
     BrowserAnimationsModule,
     MatIconModule,
     MatProgressSpinnerModule,
     FormsModule,
     ScrollingModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => getAuth()),
-    provideDatabase(() => getDatabase()),
-    provideFirestore(() => getFirestore()),
     FontAwesomeModule,
     AdsenseModule.forRoot({
       adClient: "ca-pub-6150612020055423"

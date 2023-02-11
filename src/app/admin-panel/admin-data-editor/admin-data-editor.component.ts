@@ -1,6 +1,5 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { AuthService } from '../../shared/auth.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ImpossibleLevel } from '../../shared/impossible-level';
 
 import { LevelServiceService } from '../../shared/level-service.service';
@@ -109,7 +108,6 @@ export class AdminDataEditorComponent implements OnInit {
   constructor(
     public ill_service: LevelServiceService,
     private auth_service: AuthService,
-    private afAuth: AngularFireAuth,
     private wr_service: WrServiceService,
   ) {}
 
@@ -131,42 +129,9 @@ export class AdminDataEditorComponent implements OnInit {
   togglePin() {
     this.lists_pinned = !this.lists_pinned;
   }
-  setupList() {
-    this.ill_service.getOrderedLevelList().then((doc) => {
-      this.levelList = doc.docs.map((e: any) => {
-        const data = e.data();
-        return data;
-      });
-    });
-    //setup real-time updates
-    this.ill_service.firestore
-      .collection('ill')
-      .ref.orderBy('position')
-      .onSnapshot((snapshot) => {
-        let changes: ImpossibleLevel[] = snapshot.docChanges().map((e: any) => {
-          const data = e.doc.data();
-          return data;
-        });
-        //replace all of the changes
-        changes.forEach((level, i) => {
-          let _matchingLevelIndex = this.levelList.findIndex((arr_level) => {
-            return (
-              arr_level.name == level.name &&
-              arr_level.creators_short == level.creators_short
-            );
-          });
-          if (_matchingLevelIndex != undefined) {
-            console.log('Updating level...');
-            this.levelList[_matchingLevelIndex] = level;
-          } else {
-            console.log('Adding level...');
-            this.levelList.push(level);
-            this.levelList.sort((a, b) => {
-              return a.position - b.position;
-            });
-          }
-        });
-      });
+  async setupList() {
+    this.levelList = await this.ill_service.getOrderedLevelList()
+    
   }
 
   clearForm() {
@@ -235,18 +200,6 @@ export class AdminDataEditorComponent implements OnInit {
     }
   }
 
-  refreshLevelListArray() {
-    this.ill_service.getOrderedLevelList().then((doc) => {
-      this.levelList = doc.docs.map((e: any) => {
-        const data = e.data();
-        if (data.nameLowercase == undefined) {
-          data.nameLowercase = data.name.toLowercase();
-        }
-        return data;
-      });
-    });
-  }
-
   remapLevels() {
     if (confirm('Are you sure you want to Remap all level positions?')) {
       let _changes = 0;
@@ -276,11 +229,6 @@ export class AdminDataEditorComponent implements OnInit {
       }
       this.lb_editStatus = 'Re-mapping complete: ' + _changes + ' changes';
     }
-  }
-
-  async refreshButton() {
-    await this.refreshLevelListArray();
-    this.reSortLevels();
   }
 
   reSortLevels() {
@@ -521,10 +469,9 @@ export class AdminDataEditorComponent implements OnInit {
       for (let j = 0; j < lvl.tags.length; j++) {
         lvl.tagsLowercase[j] = lvl.tags[j].toLowerCase();
       }
-      this.ill_service.firestore
+      this.ill_service.pb
         .collection('ill')
-        .doc(_real_ill_keys[i])
-        .set(lvl, { merge: true });
+        .update(lvl.id, lvl);
     });
 
     console.log('finished');
