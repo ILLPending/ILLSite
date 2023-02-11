@@ -41,7 +41,6 @@ export class AccountSettingsComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private router: Router,
-    private storage: AngularFireStorage
   ) 
   {
 
@@ -134,14 +133,14 @@ export class AccountSettingsComponent implements OnInit {
     const pfp_path = `/ILL_profilepics/pfp_${this._user_uid}_${this.bil_username}_${Date.now()}.png`
     const ref = this.storage.ref(pfp_path);
 
+    await this.storage.upload(pfp_path, this.bil_pfp_file);
+    this.authService.firestore.collection('user').doc(this._user_uid).set({profilePicture: await ref.getDownloadURL().toPromise()}, { merge: true });
+    this.bil_showUploadAnim = false;
     if(this.bil_pfp_file?.size != undefined && this.bil_pfp_file?.size < 1080549) {
-      await this.storage.upload(pfp_path, this.bil_pfp_file);
-      this.authService.firestore.collection('user').doc(this._user_uid).set({profilePicture: await ref.getDownloadURL().toPromise()}, { merge: true });
-      this.bil_showUploadAnim = false;
     } else {
-      this.bil_errLabel = 'File cannot be larger than 1MB'
-      this.bil_showUploadAnim = false;
     }
+    this.bil_errLabel = 'File cannot be larger than 1MB'
+    this.bil_showUploadAnim = false;
   }
   
   cancelUserUpdate() {

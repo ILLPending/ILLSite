@@ -1,62 +1,44 @@
 import { Injectable } from '@angular/core';
 import { ImpossibleLevel } from './impossible-level';
-import { 
-  AngularFirestore, DocumentReference,
- } from '@angular/fire/compat/firestore';
-import { orderBy, query } from 'firebase/firestore';
+import Pocketbase from 'pocketbase'
 
 @Injectable({
   providedIn: 'root'
 })
 export class LevelServiceService {
-  constructor(public firestore: AngularFirestore) {}
+  constructor(public pb: Pocketbase) {
+    pb = new Pocketbase('http://127.0.0.1:8090')
+  }
   
   ill_unordered:ImpossibleLevel[] = [];
   ill_ordered:ImpossibleLevel[] = [];
 
 
   getEntireLevelList() {
-    return this.firestore.collection('ill').snapshotChanges();
+    return this.pb.collection('ill').getFullList()
   }
 
   getWholeLevelList() {
-    return this.firestore.collection('ill').ref.get()
+    return this.pb.collection('ill').getFullList()
   }
 
-  getOrderedLevelList() {
-    const coll = this.firestore.collection('ill').ref;
-    return coll.orderBy('position', 'asc').get();
+  async getOrderedLevelList() {
+    let arr = await this.pb.collection('ill').getFullList<ImpossibleLevel>(100, { sort: '-position' })
+    console.log(arr);
+    return arr
   }
 
-  getOrderedLevelPage(start:number, end:number) {
-    const coll = this.firestore.collection('ill').ref;
-    console.log(end-start)
-    let offset = 0;
-    if(start > 1) {
-      offset = 1;
-    } else {
-      offset = 0;
-    }
-    return coll.orderBy('position', 'asc').startAt(start+offset).endBefore(end+1).get()
-  }
-
-  addLevel(level:ImpossibleLevel) {
-    level.id = this.firestore.createId();
-    return this.firestore.collection("ill").doc(level.id).set(level);
+  async addLevel(level:ImpossibleLevel) {
+    const record = await this.pb.collection("ill").create(level);
+    level.id = record.id
+    return await this.pb.collection("ill").update(level.id, level);
   }
 
   updateLevel(level:ImpossibleLevel) {
-    return this.firestore.collection("ill").doc(level.id).update(level);
+    return this.pb.collection("ill").update(level.id, level);
   }
 
   deleteLevel(level:ImpossibleLevel) {
-    return this.firestore.doc(`ill/${level.id}`).delete();
-  }
-
-  initILL() {
-    this.getOrderedLevelList().then(snapshot => {
-      this.ill_ordered = snapshot.docs.map((e:any) => { return e.data() })
-    })
-    
+    return this.pb.collection(`ill`).delete(level.id)
   }
 }

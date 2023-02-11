@@ -190,36 +190,13 @@ export class ListComponent implements OnInit {
   }
 
   async getBanner() {
-    await this.ill_service.firestore.collection('banners').ref.where('isPicked', '==', true).get().then(snapshot => {
-      let _temp = snapshot.docs.map((e:any) => { return e.data() })
-      this.url_banner = _temp[0].url
-      
-    })
+    let _bnr = await this.ill_service.pb.collection('banners').getFirstListItem('isPicked = true')
+    this.url_banner = _bnr['url']
   }
 
   async getILLForSearch() {
     this._ill = [];
-    await this.ill_service.getOrderedLevelList().then(snapshot => {
-      this._ill = snapshot.docs.map((doc:any) => {
-        return doc.data();
-      })
-    });
-  }
-  
-  async cutoutPage(start:number, end:number) {
-    this.levelListToDisplay = [];
-    this.srch_showingSearchResults = false;
-    this.listSorted = false;
-    console.log("Showing page starting from", start, "->", end)
-    await this.ill_service.getOrderedLevelPage(start, end).then(snapshot => {
-      this.levelListToDisplay = snapshot.docs.map((e:any) => {
-        const data = e.data();
-        return data;
-      })
-    }).catch(err => {
-      console.log(err);
-    })
-    this.listSorted = true;
+    this._ill = await this.ill_service.getOrderedLevelList()
   }
   
   cutPagev2(start:number, end:number) {
@@ -329,14 +306,7 @@ export class ListComponent implements OnInit {
 
   
   async loadLevelList() {
-    this.ill_service.getOrderedLevelList().then(snapshot => {
-      this.levelList = snapshot.docs.map((e:any) => {
-        const data = e.data();
-        return data;
-      })
-    }).catch(err => {
-      console.log(err);
-    })
+    this.levelList = await this.ill_service.getOrderedLevelList()
     window.scroll({
       top: 0,
       left: 0,
@@ -545,12 +515,7 @@ export class ListComponent implements OnInit {
 
   async getRandomILLFact() {
     //get all facts
-    await this.ill_service.firestore.collection('facts').ref.get().then(snapshot => {
-      this.ill_allFacts = snapshot.docs.map((e:any) => {
-        const data = e.data();
-        return data;
-      })
-    })
+    this.ill_allFacts = await this.ill_service.pb.collection('facts').getFullList()
 
     console.log(this.ill_allFacts);
     //select random fact
