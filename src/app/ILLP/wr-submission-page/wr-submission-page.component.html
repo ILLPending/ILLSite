@@ -1,17 +1,17 @@
 <div class="lg:w-[720px] w-screen dark:bg-slate-700 bg-slate-300  p-3 mt-20 mx-auto rounded-xl dark:text-white text-center shadow-2xl" *ngIf="authService.user$ | async as user">
-    <div class="w-full h-full flex flex-col" *ngIf="!user.banned_from_wrs">
+    <div class="w-full h-full flex flex-col" *ngIf="!user['banned_from_wrs']">
 
         <b class="text-3xl text-center ">Submit a World Record</b>
     
         <b class="text-lg font-semibold">ILL level</b>
         <b class="font-normal italic dark:text-slate-300">Search and pick a level you had your WR on</b>
         <div class="flex flex-col">
-            <p>Selected Level: {{bil_levelID}}</p>
+            <p>Selected Level: {{bil_levelName}} ({{bil_levelID}})</p>
             <input [(ngModel)]="bil_levelQuery" (input)="searchILL()" class="ILL_Field" type="text" placeholder="Type a level name to search"/>
             <div class="flex flex-col bg-slate-100 rounded-xl p-3 m-2 h-[256px] overflow-auto">
                 <div class="text-black">Search results: {{search_results_ILL.length}}</div>
                 <div class="flex flex-col text-left bg-slate-200 dark:bg-slate-800 p-2 m-1 rounded-xl shadow-xl font-bold hover:scale-[101%] transition-all duration-200"
-                *ngFor="let lvl of search_results_ILL" (click)="setLevelID(lvl.name+'-'+lvl.creators_short)">
+                *ngFor="let lvl of search_results_ILL" (click)="setLevelID(lvl['id'], lvl.name+' by '+lvl.creators_short)">
                     <b class="text-lg font-semibold">{{lvl.name}}</b>
                     <b class="text-base font-normal italic">by {{lvl.creators_short}}</b>
                 </div>
@@ -40,10 +40,10 @@
     
         <div class="w-full flex flex-row">
             <button class="w-full p-3 m-2 rounded-full text-white bg-slate-500 font-semibold hover:scale-105 transition-all duration-200" routerLink="/home">Cancel</button>
-            <button class="w-full p-3 m-2 rounded-full text-white bg-blue-500 font-semibold hover:scale-105 transition-all duration-200" (click)="submitWR(user.uid)">Submit</button>
+            <button class="w-full p-3 m-2 rounded-full text-white bg-blue-500 font-semibold hover:scale-105 transition-all duration-200" (click)="submitWR(user['id'])">Submit</button>
         </div>
     </div>
-    <div class="w-full h-full flex flex-col" *ngIf="user.banned_from_wrs">
+    <div class="w-full h-full flex flex-col" *ngIf="user['banned_from_wrs']">
         <b>Oops! It seems that you've been banned from sending WRs</b>
         <b>If you believe this is a mistake contact the mod team</b>
         <img class="mx-auto aspect-auto w-32" src="../../../assets/lennard.png"/>

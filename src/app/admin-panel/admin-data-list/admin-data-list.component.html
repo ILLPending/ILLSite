@@ -1,0 +1,32 @@
+<div class="flex flex-col h-[85vh] w-[420px] rounded-r-2xl bg-slate-300 dark:bg-slate-700 lg:static fixed z-20 top-0 -left-[100%]">
+
+    <!-- Search bar -->
+    <div class="flex lg:flex-row items-center justify-between bg-white p-2 rounded-full h-fit shadow-lg m-4">
+        <div class="flex flex-col w-full text-black">
+          <div class="flex flex-row items-center justify-between w-full">
+            <form class="w-full">
+              <div class="flex flex-row items-center w-full">
+                <fa-icon [icon]="i_search" class="mx-1 text-lg text-gray-400"></fa-icon>
+                <input type="text" [placeholder]="'Type in anything to search'" class="p-2 
+                h-fit align-middle w-full text-black" (input)="searchILL()"
+                [(ngModel)]="srch_input"/>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <!-- List of levels -->
+    <div class="h-full overflow-auto ILL_AdminScroll w-[95%] mx-auto">
+        <div class="flex flex-row items-center overflow-hidden rounded-xl m-4 h-fit" *ngFor="let lvl of displayLevelList">
+            <div class="from-blue-700 to-blue-500 bg-gradient-to-tr w-full h-24 text-white flex flex-row items-center">
+                <b class="m-2">{{lvl.position}} - {{lvl.name}} by {{lvl.creators_short}}</b>
+            </div>
+            <div class="from-green-700 to-green-500 bg-gradient-to-tr w-[30%] h-24 hover:scale-110 transition-all duration-300 flex flex-row items-center justify-center"
+            (click)="loadDataFromLevel(lvl)">
+                <fa-icon [icon]="i_load" class="text-white text-3xl"></fa-icon>
+            </div>
+    
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@
         <a class="flex flex-row items-center w-fit xl:bg-slate-200 xl:dark:bg-slate-800 xl:rounded-lg 
         xl:font-bold xl:shadow-lg transition-all duration-300 hover:scale-105 m-1 mx-auto p-1 text-sm" routerLink="/profile/{{wr_bestRunFrom0_player.uid}}">
             <fa-icon [icon]="i_link" class="mx-1"></fa-icon>
-            <img [src]="wr_bestRunFrom0_player.profilePicture" class="w-[24px] aspect-square rounded-full m-1">
+            <img [src]="wr_bestRunFrom0_player.avatar_url" class="w-[24px] aspect-square rounded-full m-1">
             {{wr_bestRunFrom0_player.username}}
         </a> 
         <b class="font-normal italic text-center text-sm">{{wr_bestRunFrom0_end}}%</b>
@@ -20,7 +20,7 @@
             [style.width]="wr_bestRunFrom0_end+'%'">
             </div>
         </div>
-        <button class="p-2 m-2 bg-green-500 rounded-full text-white font-semibold hover:scale-105 transition-all duration-200" [routerLink]="'/wr/'+wr_bestRunFrom0.$key">View WR in detail<fa-icon [icon]="i_link" class="m-1"></fa-icon></button>
+        <button class="p-2 m-2 bg-green-500 rounded-full text-white font-semibold hover:scale-105 transition-all duration-200" [routerLink]="'/wr/'+wr_ID_run0">View WR in detail<fa-icon [icon]="i_link" class="m-1"></fa-icon></button>
     </div>
     
     <!-- Best run -->
@@ -32,7 +32,7 @@
         <a class="flex flex-row items-center w-fit xl:bg-slate-200 xl:dark:bg-slate-800 xl:rounded-lg 
         xl:font-bold xl:shadow-lg transition-all duration-300 hover:scale-105 m-1 mx-auto p-1 text-sm" routerLink="/profile/{{wr_bestRun_player.uid}}">
             <fa-icon [icon]="i_link" class="mx-1"></fa-icon>
-            <img [src]="wr_bestRun_player.profilePicture" class="w-[24px] aspect-square rounded-full m-1">
+            <img [src]="wr_bestRun_player.avatar_url" class="w-[24px] aspect-square rounded-full m-1">
             {{wr_bestRun_player.username}}
         </a> 
         <b class="font-normal italic text-center text-sm">{{wr_bestRun_start}}% - {{wr_bestRun_end}}%</b>
@@ -42,7 +42,7 @@
             [style.marginLeft]="wr_bestRun_start+'%'" [style.width]="wr_bestRun_total+'%'">
             </div>
         </div>
-        <button class="p-2 m-2 bg-blue-500 rounded-full text-white font-semibold hover:scale-105 transition-all duration-200" [routerLink]="'/wr/'+wr_bestRun.$key">View WR in detail<fa-icon [icon]="i_link" class="m-1"></fa-icon></button>
+        <button class="p-2 m-2 bg-blue-500 rounded-full text-white font-semibold hover:scale-105 transition-all duration-200" [routerLink]="'/wr/'+wr_ID_run">View WR in detail<fa-icon [icon]="i_link" class="m-1"></fa-icon></button>
     </div>
 
 

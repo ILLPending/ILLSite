@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges, Input } from '@angular/core';
 import { AuthService } from '../../shared/auth.service';
 import { ImpossibleLevel } from '../../shared/impossible-level';
 
@@ -6,7 +6,7 @@ import { LevelServiceService } from '../../shared/level-service.service';
 import { NoPreloading } from '@angular/router';
 import { UserData } from 'src/app/shared/user-data';
 import { useAnimation } from '@angular/animations';
-import { faAngleDown, faAngleUp, faCheck, faList, faPencil, faThumbTack, faTrophy, faUpRightFromSquare, faWrench, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faCheck, faFloppyDisk, faLayerGroup, faList, faPencil, faSort, faThumbTack, faTrashCan, faTrophy, faUpRightFromSquare, faWrench, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { WrServiceService } from 'src/app/shared/wr-service.service';
 import { WrSubmission } from 'src/app/shared/wr-submission';
 
@@ -36,23 +36,24 @@ export class AdminDataEditorComponent implements OnInit {
   bil_darktext: boolean | undefined = false;
 
   bil_index: number = 1;
+  bil_mode: number = 0; //0 create mode; 1 edit mode
 
   auditLog: string[] = [];
 
   lists_pinned: boolean = false;
 
-  wr_pendingList:WrSubmission[] = [];
+  wr_pendingList:any[] = [];
+  wr_levelname:any[] = [];
 
   bil_packaged: ImpossibleLevel = {
-    id: '',
     name: '',
     fps: 0,
     level_id: '',
     gd_version: '',
     yt_videoID: '',
     creators_short: '',
-    creators_full: [],
-    tags: [],
+    creators_full: '',
+    tags: '',
     uploader: '',
     wr_min_percent: '',
     wr: '',
@@ -65,7 +66,6 @@ export class AdminDataEditorComponent implements OnInit {
     textIsDark: false,
   };
   bli_buffer: ImpossibleLevel = {
-    id: '',
     position: 0,
     name: '',
     fps: 0,
@@ -73,8 +73,8 @@ export class AdminDataEditorComponent implements OnInit {
     gd_version: '',
     yt_videoID: '',
     creators_short: '',
-    creators_full: [],
-    tags: [],
+    creators_full: '',
+    tags: '',
     uploader: '',
     wr_min_percent: '',
     wr: '',
@@ -98,11 +98,16 @@ export class AdminDataEditorComponent implements OnInit {
   i_list = faList;
   i_up = faAngleUp;
   i_dwn = faAngleDown;
-  i_cross = faXmark;
-  i_check = faCheck;
   i_link = faUpRightFromSquare;
   i_wr = faTrophy;
   i_pin = faThumbTack;
+  i_save = faFloppyDisk;
+  i_clear = faXmark;
+  i_delete = faTrashCan
+  i_sort = faSort
+  i_remap = faLayerGroup;
+
+  @Input('selected-level') selected_level:ImpossibleLevel | undefined;
 
 
   constructor(
@@ -115,23 +120,25 @@ export class AdminDataEditorComponent implements OnInit {
     //load the list once
     this.setupList();
     //handle admin
-    this.getAllPendingWRSubmissions();
   }
 
-  toggleILLList() {
-    this.bil_showList = !this.bil_showList;
-    this.bil_showWRList = false;
-  }
-  toggleWRList() {
-    this.bil_showWRList = !this.bil_showWRList;
-    this.bil_showList = false;
-  }
-  togglePin() {
-    this.lists_pinned = !this.lists_pinned;
+  toggleMode() {
+    if(this.bil_mode == 0) {
+      this.bil_mode = 1;
+    } else {
+      this.bil_mode = 0;
+    }
   }
   async setupList() {
     this.levelList = await this.ill_service.getOrderedLevelList()
-    
+    this.ill_service.pb.collection('ill').subscribe<ImpossibleLevel>('*', ({ action, record }) => {
+      if(action === "create") {
+        this.levelList = [...this.levelList, record]
+      }
+      if(action === "delete") {
+        this.levelList = this.levelList.filter((m) => m.id !== record.id);
+      }
+    })
   }
 
   clearForm() {
@@ -153,50 +160,45 @@ export class AdminDataEditorComponent implements OnInit {
     this.bil_wideshotURL = '';
     this.bil_darktext = false;
     this.bil_manualWR = false;
-    console.log(this.bil_name);
   }
 
-  submitLevel() {
-    this.packageLevel(); //package data to object
-    this.lb_editStatus = 'Sending level to database...';
+  async submitLevel() {
+    if(this.bil_mode == 0) {
+      this.addLevel();
+    } else {
+      this.editLevel();
+    }
+  }
 
+  async addLevel() {
+    this.packageLevel();
+    let _buffer:any = this.bil_packaged
+    this.ill_service.pb.collection('ill').create(_buffer)
+    this.lb_editStatus = 'Successfully added level!';
+    this.auditLog.push(
+      'Added level ' + this.bil_packaged.name + ' at #' + this.bil_index
+    );
+  }
+
+  async editLevel() {
+    let old_level = this.bil_packaged
+    this.packageLevel();
+
+    //find level
     let matchingLevel = this.levelList.find((arr_level) => {
       return (
         arr_level.name == this.bil_packaged.name &&
         arr_level.creators_short == this.bil_packaged.creators_short
       );
-    }); //check for existing level with same name/creator
-    console.log(
-      matchingLevel?.name,
-      '<- Matched level',
-      this.bil_packaged.name,
-      '<- packaged level'
-    );
+    });
 
-    if (matchingLevel == undefined) {
-      this.ill_service.addLevel(this.bil_packaged).catch((error) => {
-        this.lb_editStatus = error.toString();
-      });
-      this.levelList.splice(
-        this.bil_packaged.position - 1,
-        0,
-        this.bil_packaged
-      );
-      this.lb_editStatus = 'Successfully added level!';
-      this.auditLog.push(
-        'Added level ' + this.bil_packaged.name + ' at #' + this.bil_index
-      );
-    } else {
-      let matchingLevelIndex = this.levelList.findIndex((arr_level) => {
-        return (
-          arr_level.name == this.bil_packaged.name &&
-          arr_level.creators_short == this.bil_packaged.creators_short
-        );
-      });
+    if(matchingLevel) {
       this.bil_packaged.id = matchingLevel.id;
-      this.adminLogChangedData(matchingLevel, this.bil_packaged);
+      this.adminLogChangedData(old_level, this.bil_packaged);
       this.ill_service.updateLevel(this.bil_packaged);
       this.lb_editStatus = 'Successfully updated level!';
+    } else {
+      this.lb_editStatus = `Level ${this.bil_packaged.name} not found in database. Maybe you wanted to add a new level?`;
     }
   }
 
@@ -231,50 +233,52 @@ export class AdminDataEditorComponent implements OnInit {
     }
   }
 
-  reSortLevels() {
-    this.lb_editStatus = 'Re-sorting level list based on positions...';
-    this.levelList = this.levelList.sort((a, b) => {
-      return a.position - b.position;
-    });
-    this.lb_editStatus = 'Re-sorting complete!';
-  }
-
   packageLevel() {
     this.lb_editStatus = 'Packaging level...';
 
+    //the funny
+    let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+    //generate ID
+    let _id = ''
+    for(let i=0; i<15; i++) {
+      _id = _id + alphabet[Math.round(Math.random() * alphabet.length)]
+    }
+
     //Packing normal values
-    this.bil_packaged.name = this.bil_name;
-    this.bil_packaged.fps = this.bil_fps;
-    this.bil_packaged.level_id = this.bil_id;
-    this.bil_packaged.gd_version = this.bil_gdv;
-    this.bil_packaged.creators_short = this.bil_c_s;
-    this.bil_packaged.uploader = this.bil_upld;
-    this.bil_packaged.wr_min_percent = this.bil_wr_min;
-    this.bil_packaged.wr_yt = this.bil_wr_yt;
-    this.bil_packaged.wr = this.bil_wr;
-    this.bil_packaged.marked_for_removal = this.bil_removal;
-    this.bil_packaged.annotated = this.bil_annotation;
-    this.bil_packaged.position = this.bil_index;
-    this.bil_packaged.marking_reason = this.bil_reason;
-    this.bil_packaged.wide_level_shot_url = this.bil_wideshotURL;
-    this.bil_packaged.textIsDark = this.bil_darktext;
-    this.bil_packaged.nameLowercase = this.bil_name.toLowerCase();
-    this.bil_packaged.shouldHaveManualWR = this.bil_manualWR;
-
-    //packing arrays
-    this.bil_packaged.creators_full = this.bil_c_f.split(',');
-    this.bil_packaged.creators_full_lowercase = this.bil_c_f
-      .toLowerCase()
-      .split(',');
-    this.bil_packaged.tags = this.bil_tags.split(',');
-    this.bil_packaged.tagsLowercase = this.bil_tags.toLowerCase().split(',');
-
-    //removal of URL
-    this.bil_packaged.yt_videoID = this.bil_ytid
+    this.bil_packaged = {
+      position: this.bil_index,
+      name: this.bil_name,
+      creators_short: this.bil_c_s,
+      fps: this.bil_fps,
+      gd_version: this.bil_gdv,
+      creators_full: this.bil_c_f,
+      tags: this.bil_tags,
+      level_id: this.bil_id,
+      yt_videoID: this.bil_ytid
       .replace('youtube.com/watch?v=', '')
       .replace('https://', '')
       .replace('www.', '')
-      .replace('youtu.be/', '');
+      .replace('youtu.be/', ''),
+      wide_level_shot_url: this.bil_wideshotURL,
+      uploader: this.bil_upld,
+      wr_min_percent: this.bil_wr_min,
+      wr: this.bil_wr,
+      wr_yt: this.bil_wr_yt,
+      marked_for_removal: this.bil_removal,
+      annotated: this.bil_annotation,
+      marking_reason: this.bil_reason,
+      textIsDark: this.bil_darktext,
+      shouldHaveManualWR: this.bil_manualWR,
+    }
+
+    //fix gd versions
+    if(this.bil_packaged.gd_version === "1") {
+      this.bil_packaged.gd_version = "1.0"
+    }
+    if(this.bil_packaged.gd_version === "2") {
+      this.bil_packaged.gd_version = "2.0"
+    }
   }
 
   logLevelArray() {
@@ -286,12 +290,7 @@ export class AdminDataEditorComponent implements OnInit {
   }
 
   loadDataFromLevel(level: ImpossibleLevel) {
-    let matchingLevel = this.levelList.find((arr_level) => {
-      return (
-        arr_level.name == level.name &&
-        arr_level.creators_short == level.creators_short
-      );
-    });
+    let matchingLevel = level
     console.log(matchingLevel);
     if (matchingLevel == undefined) {
       this.lb_editStatus = 'No Matching level found';
@@ -325,7 +324,7 @@ export class AdminDataEditorComponent implements OnInit {
     }
   }
 
-  removeLevel() {
+  async removeLevel() {
     this.packageLevel();
     let matchingLevel = this.levelList.find((arr_level) => {
       return (
@@ -340,6 +339,7 @@ export class AdminDataEditorComponent implements OnInit {
       this.ill_service.deleteLevel(matchingLevel);
       this.lb_editStatus = 'Removed Level successfully!';
     }
+    this.levelList = await this.ill_service.getOrderedLevelList()
   }
 
   adminLogChangedData(old_data: ImpossibleLevel, new_data: ImpossibleLevel) {
@@ -433,6 +433,26 @@ export class AdminDataEditorComponent implements OnInit {
           new_data.yt_videoID
       );
     }
+    if (old_data.wide_level_shot_url != new_data.wide_level_shot_url) {
+      this.auditLog.push(
+        new_data.name +
+          ' wideshot changed: ' +
+          new_data.wide_level_shot_url
+      );
+    }
+    if (old_data.shouldHaveManualWR != new_data.shouldHaveManualWR) {
+      if(new_data.shouldHaveManualWR) {
+        this.auditLog.push(
+          new_data.name +
+            ' disconnected from the online WR system: '
+        );
+      } else {
+        this.auditLog.push(
+          new_data.name +
+            ' connected to the online WR system: '
+        );
+      }
+    }
   }
 
   async readd_database_entries() {
@@ -458,142 +478,20 @@ export class AdminDataEditorComponent implements OnInit {
     console.log(_real_ill_keys);
 
     await _real_ill_array.forEach((lvl, i) => {
-      lvl.nameLowercase = lvl.name.toLowerCase();
-      lvl.creators_full_lowercase = [];
-      lvl.tagsLowercase = [];
       lvl.textIsDark = false;
       lvl.shouldHaveManualWR = false;
-      for (let j = 0; j < lvl.creators_full.length; j++) {
-        lvl.creators_full_lowercase[j] = lvl.creators_full[j].toLowerCase();
+      if(lvl.id) {
+        this.ill_service.pb
+          .collection('ill')
+          .update(lvl.id, lvl);
       }
-      for (let j = 0; j < lvl.tags.length; j++) {
-        lvl.tagsLowercase[j] = lvl.tags[j].toLowerCase();
-      }
-      this.ill_service.pb
-        .collection('ill')
-        .update(lvl.id, lvl);
     });
 
     console.log('finished');
   }
 
-  async resetProfileData() {
-    let _default_pfps: string[] = [
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_1.png?alt=media&token=82730092-146b-4184-8cb6-dcf1231be25b',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_2.png?alt=media&token=421075f5-d291-43fa-a152-5f1f1fadd57c',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_3.png?alt=media&token=a67a805c-3376-473b-b5b8-9b6bee91077a',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_4.png?alt=media&token=87af460c-f171-40bf-9a2e-4adf40fec13c',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_5.png?alt=media&token=e12c9cd5-0be1-4d41-abb0-1ab812d180ac',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_6.png?alt=media&token=cb9c532e-a0ec-4de1-8da3-fe02d81c1382',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_7.png?alt=media&token=ee553070-5010-4013-82b3-98ecb69bc3fc',
-    ];
-    let _userArray: UserData[] = [];
-
-    //get all users
-    await this.auth_service.getAllUsers().then((snapshot: any) => {
-      _userArray = snapshot.docs.map((e: any) => {
-        const data = e.data();
-        return data;
-      });
-    });
-
-    await _userArray.forEach((usr, i) => {
-      // usr.profilePicture = _default_pfps[Math.floor(Math.random() * _default_pfps.length)]
-      // usr.description = '';
-      usr.ill_points = 0;
-      // if(usr.username != null || usr.username != undefined) {
-      //   usr.gd_username = usr.username;
-      // }
-      usr.badges = ['Member'];
-      usr.bottedLevels_name = [];
-      usr.bottedLevels_creator = [];
-      usr.completed_bundles_name = [];
-
-      usr.builder_points = 0;
-      // usr.verified = false;
-      usr.banned_from_wrs = false;
-
-
-      let _lvl_cnt = 0;
-      let _temp_points = 0;
-      this.levelList.forEach((lvl, j) => {
-        //find creator in level
-        if (
-          lvl.creators_full.find((e) => {
-            return usr.gd_username == e;
-          })
-        ) {
-          //increase level count
-          _lvl_cnt++;
-          if (lvl.position < 100) {
-            _temp_points += 20 + 50 / (lvl.position / 2);
-          } else {
-            _temp_points += 20;
-          }
-        }
-      });
-      if (_lvl_cnt > 0) {
-        usr.badges?.push('Creator');
-      }
-
-      if (usr.roles.admin == true) {
-        usr.badges.push('List Admin');
-        usr.verified = true;
-      }
-
-      usr.builder_points = Math.round(_temp_points);
-      usr.created_levels = _lvl_cnt;
-
-
-      this.auth_service.firestore
-        .collection('user')
-        .doc(usr.uid)
-        .set(usr, { merge: true });
-    });
-  }
-
-  findAverageFPS() {
-    let _avg: number = 0;
-    this.levelList.forEach((level, i) => {
-      let _fps: number | string = level.fps;
-      _avg += Number(_fps);
-    });
-
-    console.log(_avg / this.levelList.length);
-  }
-
-  async getAllPendingWRSubmissions() {
-    await this.wr_service.firestore.collection('wr-sumbissions').ref
-    .where('status', '==', 'pending')
-    .orderBy('submitted_at', 'asc')
-    .get().then(snapshot => {
-      this.wr_pendingList = snapshot.docs.map((e:any) => {
-        return e.data()
-      })
-    });
-  }
-
-  async rejectSubmission(id:string) {
-    this.wr_service.changeWRStatus(id, 'Rejected', 'No custom reason provided. Rejected via quick-rejection. Possible reasons: No proof, unrealistic run, joke submission');
-  }
-  
-  async approveSubmission(id:string) {
-    this.wr_service.changeWRStatus(id, 'Approved', '')
-  }
-
-  async deleteRejectedWRs() {
-    let wrs:WrSubmission[] = []
-    await this.wr_service.firestore.collection('wr-sumbissions').ref
-    .where('status', '==', 'Rejected')
-    .orderBy('submitted_at', 'asc')
-    .get().then(snapshot => {
-      wrs = snapshot.docs.map((e:any) => {
-        return e.data()
-      })
-    });
-
-    wrs.forEach((wr, i) => {
-      this.wr_service.firestore.collection('wr-sumbissions').doc(wr.$key).delete()
-    })
+  async getLevelname(id:string) {
+    let record = await this.ill_service.pb.collection('ill').getOne(id)
+    return record['name']+"-"+record['creators_short']
   }
 }

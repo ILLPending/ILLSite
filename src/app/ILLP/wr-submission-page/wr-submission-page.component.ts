@@ -14,6 +14,7 @@ import { WrSubmission } from 'src/app/shared/wr-submission';
 export class WrSubmissionPageComponent implements OnInit {
 
   bil_levelID: string = '';
+  bil_levelName: string = '';
   bil_levelQuery: string = '';
   bil_run: string = '';
   bil_run_start: number = 0;
@@ -34,6 +35,7 @@ export class WrSubmissionPageComponent implements OnInit {
     $key: '',
     progress: '',
     level: '',
+    level_name: '',
     status: '',
     submitted_by: '',
     submitted_at: 0,
@@ -52,16 +54,15 @@ export class WrSubmissionPageComponent implements OnInit {
     this.loadILL();
   }
 
-  setLevelID(id:string) {
-    this.bil_levelID = id;
+  setLevelID(id:string|undefined, name:string) {
+    if(id) {
+      this.bil_levelID = id;
+    }
+    this.bil_levelName = name;
   }
 
   async loadILL() {
-    await this.illService.getWholeLevelList().then(snapshot => {
-      this.ill = snapshot.docs.map((e:any) => {
-        return e.data()
-      })
-    })
+    this.ill = await this.illService.getEntireLevelList()
   }
 
   searchILL() {
@@ -98,6 +99,7 @@ export class WrSubmissionPageComponent implements OnInit {
 
   packageWR() {
     this.bil_packagedWR.level = this.bil_levelID;
+    this.bil_packagedWR.level_name = this.bil_levelName;
     this.bil_packagedWR.progress = this.bil_run;
     this.bil_packagedWR.isFromZero = this.bil_isRunFrom0;
     this.bil_packagedWR.video_url = this.bil_videoURL;
@@ -108,8 +110,7 @@ export class WrSubmissionPageComponent implements OnInit {
     this.packageWR();
     if(uid) {
       this.bil_packagedWR.submitted_by = uid;
-      this.bil_packagedWR.$key = this.wrService.firestore.createId()
-      await this.wrService.submitWR(this.bil_packagedWR, this.bil_packagedWR.$key);
+      await this.wrService.submitWR(this.bil_packagedWR);
       this.router.navigate(['/wr/'+this.bil_packagedWR.$key]);
     }
   }

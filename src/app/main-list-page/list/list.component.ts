@@ -27,11 +27,13 @@ import {
   faCloudMoon,
   faCode,
   faCodeBranch,
+  faCookie,
   faCrown,
   faDatabase,
   faDragon,
   faEye,
   faFilter,
+  faFishFins,
   faGhost,
   faHourglass,
   faHurricane,
@@ -110,6 +112,12 @@ export class ListComponent implements OnInit {
   srch_finalPage:boolean = false;
 
   _currentTheme = localStorage['theme'];
+  loading_gif:string = '';
+  gifs:string[] = [
+    '../../../assets/loading-gifs/Loading_1.gif',
+    '../../../assets/loading-gifs/Loading_2.gif',
+    '../../../assets/loading-gifs/Loading_3.gif'
+  ];
 
   //icons
   i_name = faDatabase;
@@ -164,6 +172,8 @@ export class ListComponent implements OnInit {
   i_alex = faInfinity;
   i_moonfrost = faImage;
   i_electro = faGhost;
+  i_yan = faCookie;
+  i_luned = faFishFins;
 
   url_banner:any = ''
 
@@ -173,7 +183,12 @@ export class ListComponent implements OnInit {
 
 
   async ngOnInit() {
+    //load random gif
+    
+
+    this.loading_gif = this.gifs[Math.round(Math.random()*this.gifs.length-1)];
     this.initList()
+
   }
 
 
@@ -182,7 +197,7 @@ export class ListComponent implements OnInit {
     this.cutPagev2(0, this.pageSize);
 
 
-    // this.listSorted = true;
+    // this.listSorted = false;
 
     
     this.getRandomILLFact();
@@ -200,6 +215,7 @@ export class ListComponent implements OnInit {
   }
   
   cutPagev2(start:number, end:number) {
+    this.srch_showingSearchResults = false;
     let _temp_ill = this._ill.map((e) => { return e })
     this.listSorted = false;
     _temp_ill.splice(end, 9999)
@@ -376,7 +392,7 @@ export class ListComponent implements OnInit {
 
   async search_v2(prompt:string, criteria:string, matchTags:string[], sortBy?:string) {
     
-    if(prompt == undefined || prompt == "" || prompt.length <= 1) {
+    if(prompt == undefined || prompt == "") {
       this.cutPagev2(0, this.pageSize);
     } else {
       //Hide to show it's doing smth
@@ -410,51 +426,35 @@ export class ListComponent implements OnInit {
         _tempList = _tempList.concat(this._ill.filter((e:ImpossibleLevel) => {
           return e.level_id == prompt;
         }));
-    
-        //Array search
-    
-        //Creators full
+
+        //Creators
         _tempList = _tempList.concat(this._ill.filter((e:ImpossibleLevel) => {
-          let _found = false;
-          e.creators_full.forEach((crt, i ) => {
-            if(crt.toLowerCase().includes(prompt.toLowerCase())) {
-              _found = true;
-            }
-          });
-          return _found;
+          return e.creators_full.toLowerCase().includes(prompt.toLowerCase());
         }));
         
         
-      } else if(criteria = "name") {
+      } else if(criteria == "name") {
         //Names
         _tempList = _tempList.concat(this._ill.filter((e:ImpossibleLevel) => {
           return e.name.toLowerCase().includes(prompt.toLowerCase());
         }));
-      } else if(criteria = "creator") {
-        //Creators full
+      } else if(criteria == "creator") {
+        //Creators
         _tempList = _tempList.concat(this._ill.filter((e:ImpossibleLevel) => {
-          let _found = false;
-          let _creatorList = e.creators_full
-          _creatorList.forEach((crt, i ) => {
-            console.log(1)
-            if(crt.toLowerCase().includes(prompt.toLowerCase())) {
-              _found = true;
-            }
-          });
-          return !_found;
+          return e.creators_full.toLowerCase().includes(prompt.toLowerCase());
         }));
 
-      } else if(criteria = "fps") {
+      } else if(criteria == "fps") {
         //Fps
         _tempList = _tempList.concat(this._ill.filter((e:ImpossibleLevel) => {
           return e.fps == Number(prompt);
         }));
-      } else if(criteria = "gd_version") {
+      } else if(criteria == "gd_version") {
         //GD version
         _tempList = _tempList.concat(this._ill.filter((e:ImpossibleLevel) => {
           return e.gd_version.toLowerCase().includes(prompt.toLowerCase());
         }));
-      } else if(criteria = "level_id") {
+      } else if(criteria == "level_id") {
         //Level id
         _tempList = _tempList.concat(this._ill.filter((e:ImpossibleLevel) => {
           return e.level_id == prompt;
@@ -511,6 +511,36 @@ export class ListComponent implements OnInit {
         behavior: 'smooth'
       })
     }
+  }
+
+  resort(sortBy:string) {
+    let _tempList = this._ill;
+    this.listSorted = false;
+    this.levelListToDisplay = [];
+    this.srch_showingSearchResults = true;
+    if(sortBy == undefined || sortBy == "position") {
+      //sort by position
+      _tempList = _tempList.sort((a, b) => {
+        return a.position - b.position;
+      })
+    } else if(sortBy == "fps") {
+      //sort by position
+      _tempList = _tempList.sort((a, b) => {
+        return Number(b.fps) - Number(a.fps);
+      })
+    } else if(sortBy == "level_id") {
+      //sort by position
+      _tempList = _tempList.sort((a, b) => {
+        return Number(a.level_id) - Number(b.level_id);
+      })
+    }
+    this._ill_results = _tempList.map((e) => { return e })
+    this.cutSrchPagev2(0, this.pageSize, _tempList)
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    })
   }
 
   async getRandomILLFact() {

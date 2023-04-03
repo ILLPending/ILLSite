@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import auth from 'firebase/compat/app'
-
 import { Observable, of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { UserData, Roles } from './user-data';
@@ -14,16 +12,18 @@ import Pocketbase from 'pocketbase'
   providedIn: 'root'
 })
 export class AuthService {
-  user$: Observable<UserData | undefined | null>;
-  userArr: UserData[] = [];
-
+  
   constructor(
-    public pb: Pocketbase,
     private router: Router
-  ) {
-    this.user$ = of(this.pb.authStore.model)
-
-    pb.authStore.onChange((auth) => {
+    ) {
+      
+    }
+    
+  pb = new Pocketbase('https://139.144.183.80:433')
+  user$ = of(this.pb.authStore.model)
+  initAuth() {
+    this.pb.authStore.onChange((auth) => {
+      console.log('authstore changed')
       this.user$ = of(this.pb.authStore.model)
     })
   }
@@ -32,30 +32,33 @@ export class AuthService {
     return this.pb.collection('users').authWithPassword(email, password)
   }
 
-  createAccount(username: string, email: string, password: string) {
+  async createAccount(username: string, email: string, password: string) {
     let _default_pfps:string[] = [
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_1.png?alt=media&token=82730092-146b-4184-8cb6-dcf1231be25b',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_2.png?alt=media&token=421075f5-d291-43fa-a152-5f1f1fadd57c',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_3.png?alt=media&token=a67a805c-3376-473b-b5b8-9b6bee91077a',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_4.png?alt=media&token=87af460c-f171-40bf-9a2e-4adf40fec13c',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_5.png?alt=media&token=e12c9cd5-0be1-4d41-abb0-1ab812d180ac',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_6.png?alt=media&token=cb9c532e-a0ec-4de1-8da3-fe02d81c1382',
-      'https://firebasestorage.googleapis.com/v0/b/impossible-level-list.appspot.com/o/ILL_profilepics%2Fpfp_7.png?alt=media&token=ee553070-5010-4013-82b3-98ecb69bc3fc',
+      'https://i.imgur.com/VpruWA0.png',
+      'https://i.imgur.com/iyRx1oz.png',
+      'https://i.imgur.com/MGx63hR.png',
+      'https://i.imgur.com/XvO0dJf.png',
+      'https://i.imgur.com/qYRY1qv.png',
+      'https://i.imgur.com/xZFAy4E.png',
     ];
 
-    const data: UserData = {
+    const data = {
+      uid: '',
       username: username,
-      gd_username: '',
+      gd_username: username,
       permissions: 'member',
       illp_points: 0,
       description: '',
-      profilePicture: _default_pfps[Math.round(Math.random() * (_default_pfps.length-1))],
       created_levels: 0,
-      badges: ['Member'],
+      badges: 'Member',
       show_in_leaderboards: false,
+      password: password,
+      passwordConfirm: password,
+      avatar_url: _default_pfps[Math.round(Math.random() * _default_pfps.length)],
+      email: email,
     }
-    this.pb.collection('users').create(data)
-    this.pb.collection('users').authWithPassword(email, password)
+    let record = await this.pb.collection('users').create(data)
+    return await this.pb.collection('users').authWithPassword(email, password)
   }
 
   signOut() {
@@ -63,26 +66,31 @@ export class AuthService {
   }
 
   isCurrentUserAdmin() {
-    let _usr = undefined;
-    const _obs = this.user$.subscribe(val => _usr = val);
-    console.log(_usr);
+    if(this.pb.authStore.model) {
+      return this.pb.authStore.model['permissions'] == 'listAdmin'
+    }
+    return false;
   }
 
   async getAllUsers() {
-    return this.pb.collection('user').getFullList<UserData>(200);
+    return this.pb.collection('users').getFullList<UserData>(200);
   }
 
   async getDataFromGDUsername(username: string) {
-    return await this.pb.collection('user').getFirstListItem<UserData>("gd_username = '"+username+"'")
+    try {
+      return await this.pb.collection('users').getFirstListItem<UserData>('gd_username = "'+username+'"', { $autoCancel: false })
+    } catch (err) {
+      console.log(err)
+      return null;
+    }
   }
 
   async getDataFromUID(uid: string) {
-    let _arr: UserData[] = [];
-    await this.pb.collection('users').getFirstListItem(" id = '2wtntoh7dx0y28q' ")
-
-    if (_arr.length > 0) {
-      return _arr[0];
-    } else {
+    try {
+      return await this.pb.collection('users').getFirstListItem(" id = '"+uid+"' ").catch((reason) => {
+        // console.log('User', uid, 'is not present in our database')
+      })
+    } catch {
       return null;
     }
   }

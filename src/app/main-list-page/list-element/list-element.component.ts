@@ -30,27 +30,11 @@ export class ListElementComponent implements OnInit {
   level_name = "CYCLOLCYC";
   level_position = 1;
   level_creators_short = "Eightos and more";
-  level_creators_full = [
-    'Eightos',
-    'Arekusul14',
-    'Darmuth',
-    'AuraXalaiv',
-    'Skub',
-    'Sunbrey',
-    'OrbPerson',
-    'Maus999',
-    'Ewe23',
-    'Tio2',
-    'MagYTu',
-    'Prototype Hipo'
-  ]
+  level_creators_full:string[] = []
   level_fps = 1974;
   level_id = '77018514'; //Write Unreleased if not given
   level_gd_version = '2.1';
-  level_tags = [
-    '2 player',
-    'No Victors',
-  ]
+  level_tags:string[] = []
   level_minimal_wr_percent = '>2%'
   level_wr = '0.092% (eli22507)';
   level_wr_yt = 'https://youtu.be/xD9BWvMZGm4'
@@ -65,8 +49,8 @@ export class ListElementComponent implements OnInit {
   level_creatorAccounts:UserData[] = [];
   level_shouldHaveManualWR:boolean|undefined = false;
 
-  level_wrID_run:string = '';
-  level_wrID_0:string = '';
+  level_wrID_run:any;
+  level_wrID_0:any;
   
   card_expanded = false;
   card_mobile_expanded = false;
@@ -93,16 +77,6 @@ export class ListElementComponent implements OnInit {
   i_link = faUpRightFromSquare;
   i_more = faEllipsis;
 
-  intersector = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if(entry.isIntersecting) {
-        entry.target.classList.remove("opacity-0")
-      } else {
-        entry.target.classList.add("opacity-0")
-      }
-    });
-  })
-
   //all data in 1 object
   @Input('ill_level') ill_level:ImpossibleLevel = {
     id: '',
@@ -113,19 +87,19 @@ export class ListElementComponent implements OnInit {
     gd_version: '2.2',
     yt_videoID: 'DqB2uTY9-Ss',
     creators_short: 'everyone & skub',
-    creators_full: ['Eightos1', 'Eightos2', 'Eightos3', 'Eightos4', 'Eightos5', 'Ewe23', 'Locked101', 'MateussDev', 'NotRealAcc', 'LennardHater228', 'skubb', 'adaf', 'AuraXalaiv'],
-    tags: ['sex', 'girl', 'furry', 'Previously Rated', 'Rated'],
+    creators_full: 'eightos,orbperson,maus999,Ewe23,HSWSmokeWeed,TiO2,MagYTU,Aeqing1,Linear,AuraXalaiv,Arekushi14,Darmuth,skubb,Deactive,Xane88',
+    tags: 'Rated,Previously Rated,sex,girl,lol',
     uploader: 'Xane88',
     wr_min_percent: '0.01',
     wr: '0.092% (eli22507)',
     wr_yt: 'https://youtu.be/xD9BWvMZGm4',
     marked_for_removal: true,
     annotated: true,
-    marking_reason: 'Simply unfunny, horrendus, impossible to playtest and generally bad',
+    marking_reason: 'Simply unfunny, horrendous, impossible to playtest and generally bad',
     wide_level_shot_url: 'https://media.discordapp.net/attachments/598756348829892647/1043253620772196362/unknown.png'
   };
   @Input('ill_position') ill_position?:number;
-  constructor(private sanitizer: DomSanitizer, private authService: AuthService, private wr_service:WrServiceService) { 
+  constructor(public sanitizer: DomSanitizer, private authService: AuthService, private wr_service:WrServiceService) { 
   }
   
 
@@ -136,8 +110,8 @@ export class ListElementComponent implements OnInit {
     this.level_gd_version = this.ill_level.gd_version;
     this.card_yt_videoID = this.ill_level.yt_videoID;
     this.level_creators_short = this.ill_level.creators_short;
-    this.level_creators_full = this.ill_level.creators_full;
-    this.level_tags = this.ill_level.tags;
+    this.level_creators_full = this.ill_level.creators_full.replaceAll(" ", "").split(",")
+    this.level_tags = this.ill_level.tags.split(",")
     this.level_uploader = this.ill_level.uploader;
     this.level_minimal_wr_percent = this.ill_level.wr_min_percent;
     this.level_wr = this.ill_level.wr;
@@ -149,69 +123,57 @@ export class ListElementComponent implements OnInit {
     this.level_markdown_reason = this.ill_level.marking_reason;
     this.card_yt_vidEmbedURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/'+this.card_yt_videoID)
     this.card_yt_thumbnailURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://i.ytimg.com/vi/'+this.card_yt_videoID+'/mqdefault.jpg')
-    this.level_isRated = this.level_tags.find((v) => {
-      return v == "Rated"
-    }) != null;
-    this.level_isUnRated = this.level_tags.find((v) => {
-      return v == "Previously Rated"
-    }) != null;
+    this.level_isRated = this.level_tags.includes('Rated');
+    this.level_isUnRated = this.level_tags.includes('Previously Rated');
     this.level_shouldHaveManualWR = this.ill_level.shouldHaveManualWR;
     this.setupwideshot();
     this.addPFPs();
     this.getWRData();
-
-    //use animation
-    let _selfHTML = document.getElementById('ILL_levelCard')
-    if(_selfHTML != null) {
-      this.intersector.observe(_selfHTML)
-    }
   }
 
   async getWRData() {
-    let _wrs_runs: WrSubmission[] = []
-    await this.wr_service.firestore.collection('wr-sumbissions').ref
-    .where('level', '==', this.ill_level.name+'-'+this.ill_level.creators_short)
-    .where('status', '==', 'Approved')
-    .where('isFromZero', '==', false)
-    .orderBy('submitted_at', 'desc')
-    .get().then(snapshot => {
-      _wrs_runs = snapshot.docs.map((e:any) => {
-        return e.data();
-      })
+    let _wrs_runs
+    let _wrs_runs_0
+    
+    console.log(`level.id = '${this.ill_level.id}' && status = "Approved" && isFromZero = false`)
+    _wrs_runs = await this.wr_service.pb.collection('wr_submissions').getFirstListItem(`level.id = '${this.ill_level.id}' && status = "Approved" && isFromZero = false` ).catch((r) => {
+      console.log("lack of approved WR not from zero")
     })
     
-    if(_wrs_runs.length > 0) {
-      this.level_wrID_run = _wrs_runs[0].$key
-    }
-
-    let _wrs_runs_0: WrSubmission[] = []
-    await this.wr_service.firestore.collection('wr-sumbissions').ref
-    .where('level', '==', this.ill_level.name+'-'+this.ill_level.creators_short)
-    .where('status', '==', 'Approved')
-    .where('isFromZero', '==', true)
-    .orderBy('submitted_at', 'desc')
-    .get().then(snapshot => {
-      _wrs_runs_0 = snapshot.docs.map((e:any) => {
-        return e.data();
-      })
+    console.log(`level.id = '${this.ill_level.id}' && status = "Approved" && isFromZero = true`)
+    _wrs_runs_0 = await this.wr_service.pb.collection('wr_submissions').getFirstListItem(`level.id = '${this.ill_level.id}' && status = "Approved" && isFromZero = true` ).catch((r) => {
+      console.log("lack of approved WR from zero")
     })
-  
-    if(_wrs_runs_0.length > 0) {
-      this.level_wrID_0 = _wrs_runs_0[0].$key
+    
+    if(_wrs_runs && _wrs_runs != null) {
+      this.level_wrID_run = _wrs_runs['id']
+    } else {
+
     }
+    
+  
+    if(_wrs_runs_0 && _wrs_runs_0 != null) {
+      this.level_wrID_0 = _wrs_runs_0['id']
+    }
+    console.log("id:", this.ill_level.id, "wr_id non 0:", this.level_wrID_run, "wr_id from 0:", this.level_wrID_0)
+    
   }
 
-  async addPFPs() {
+  log(text:any) {
+    console.log(text)
+  }
+
+  addPFPs() {
     let _cnt = 0;
-    await this.level_creators_full.forEach(async (creator, i) => {
+    this.level_creators_full.forEach(async (creator, i) => {
       let _pfp = await this.authService.getDataFromGDUsername(creator)
       if(_pfp) {
         _cnt++
         this.level_creatorAccounts.push(_pfp);
-        if(_pfp?.profilePicture != null) {
-          this.level_creatorPFPs.push(_pfp?.profilePicture)
+        if(_pfp?.avatar_url != null) {
+          this.level_creatorPFPs.push(_pfp?.avatar_url+"?thumb=48x48f")
           if(_cnt<=3) {
-            this.level_creatorPFPs_limited.push(_pfp?.profilePicture)
+            this.level_creatorPFPs_limited.push(_pfp?.avatar_url+"?thumb=48x48f")
           }
         }
       }
@@ -227,8 +189,8 @@ export class ListElementComponent implements OnInit {
     });
   }
 
-  async setupwideshot() {
-    this.card_wideshot_link = await this.sanitizer.bypassSecurityTrustResourceUrl(''+this.ill_level.wide_level_shot_url);
+  setupwideshot() {
+    this.card_wideshot_link = this.sanitizer.bypassSecurityTrustResourceUrl(''+this.ill_level.wide_level_shot_url);
 
     //disallow white text on light theme
     if(this.ill_level.wide_level_shot_url != '') {

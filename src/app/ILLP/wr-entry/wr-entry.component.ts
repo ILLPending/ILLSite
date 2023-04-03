@@ -3,6 +3,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from 'src/app/shared/auth.service';
+import { LevelServiceService } from 'src/app/shared/level-service.service';
 import { UserData } from 'src/app/shared/user-data';
 import { WrServiceService } from 'src/app/shared/wr-service.service';
 import { WrSubmission } from 'src/app/shared/wr-submission';
@@ -15,6 +16,7 @@ import { WrSubmission } from 'src/app/shared/wr-submission';
 export class WrEntryComponent implements OnInit {
 
   bil_data: WrSubmission | undefined;
+  bil_id:string = ''
   bil_levelName: string = '';
   bil_creatorName: string = '';
 
@@ -50,7 +52,8 @@ export class WrEntryComponent implements OnInit {
     private route: ActivatedRoute,
     private wr_service: WrServiceService,
     public auth_service: AuthService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public illservice: LevelServiceService
   ) { }
 
   ngOnInit(): void {
@@ -68,6 +71,7 @@ export class WrEntryComponent implements OnInit {
         this.bil_data = _tmpWR;
         this.bil_show = true;
         this.found_wr = true;
+        this.bil_id = _wrID;
 
         this.bil_status = this.bil_data.status;
 
@@ -85,12 +89,12 @@ export class WrEntryComponent implements OnInit {
         }
 
         //get level data
-        let arr2 = this.bil_data.level.split('-');
-        this.bil_levelName = arr2[0];
-        this.bil_creatorName = arr2[1];
+        let record = await this.illservice.pb.collection('ill').getOne(this.bil_data.level)
+        this.bil_levelName = record['name'];
+        this.bil_creatorName = record['creators_short'];
 
         //get submitter data
-        this.bil_sumbitter = await this.auth_service.getDataFromUID(this.bil_data.submitted_by);
+        this.bil_sumbitter = this.record_to_userdata(await this.auth_service.getDataFromUID(this.bil_data.submitted_by));
 
         //check if video is youtube
         if(this.bil_data.video_url.includes('youtu')) {
@@ -114,14 +118,14 @@ export class WrEntryComponent implements OnInit {
 
   async approveWR() {
     if(this.bil_data) {
-      await this.wr_service.changeWRStatus(this.bil_data?.$key, 'Approved', '');
+      await this.wr_service.changeWRStatus(this.bil_id, 'Approved', '');
       this.getWRData();
     }
   }
   
   async rejectWR() {
     if(this.bil_data) {
-      await this.wr_service.changeWRStatus(this.bil_data?.$key, 'Rejected', this.adm_rejectReason);
+      await this.wr_service.changeWRStatus(this.bil_id, 'Rejected', this.adm_rejectReason);
       this.getWRData();
     }
   }
@@ -130,5 +134,26 @@ export class WrEntryComponent implements OnInit {
     let _rng = Math.round(Math.random() * (this.selected_mascotts.length-1));
     this.selected_mascott_name = this.selected_mascotts[_rng].name
     this.selected_mascott_path = this.selected_mascotts[_rng].path
+  }
+
+  record_to_userdata(r:any) {
+    let res:UserData;
+    res = {
+      uid: r['id'],
+      permissions: r['permissions'],
+      username: r['username'],
+      gd_username: r['gd_username'],
+      avatar: r['avatar'],
+      avatar_url: r['avatar_url'],
+      description: r['description'],
+      badges: r['badges'],
+      ill_verified: r['ill_verified'],
+      created_levels: r['created_levels'],
+      show_in_leaderboards: r['show_in_leaderboards'],
+      banned_from_leaderboards: r['banned_from_leaderboards'],
+      banned_from_wrs: r['banned_from_wrs']
+
+    }
+    return res;
   }
 }

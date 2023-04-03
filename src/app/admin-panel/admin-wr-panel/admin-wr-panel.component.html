@@ -1,0 +1,62 @@
+<div class="flex flex-row">
+    <!-- List -->
+    <div class="flex flex-col bg-slate-300 dark:bg-slate-700 rounded-r-2xl my-2 p-3 h-[85vh] w-[620px]">
+        <b class="dark:text-white text-lg">WRs pending review:</b>
+        <div class="flex flex-col items-stretch justify-start overflow-auto h-full" >
+            <!-- List WR -->
+            <div class="flex flex-row bg-local bg-left-top text-white p-2 rounded-full my-2" *ngFor="let wr of pending_wr_list; index as i"
+            style="background-image: url({{pending_wrs_wideshots[i]}});">
+                <a routerLink="/wr/{{wr['id']}}" class="m-2 rounded-full bg-blue-600 w-[15%] p-1 text-lg select-none hover:scale-105 transition-all duration-200 flex flex-row items-center justify-center">
+                    <fa-icon [icon]="i_link"></fa-icon>
+                </a>
+                <div class="flex flex-col w-[75%]">
+                    <div class="flex flex-row m-2">
+                        <b class="ILL_blackOutline">{{wr.level_name}}</b>
+                    </div>
+                    <!-- Progress bar -->
+                    <div class="flex flex-row items-start justify-between w-full">
+                        <div class="mx-2 h-3 rounded-full bg-slate-800 w-[70%]">
+                            <!-- w is for the percentage that was the run (end% - start%), ml is the offset from start (start%) -->
+                            <div class="h-full from-blue-500 to-blue-700 bg-gradient-to-r rounded-full"
+                            [style.marginLeft]="pending_wrs_progress_start[i]+'%'" [style.width]="pending_wrs_progress_width[i]+'%'">
+                            </div>
+                        </div>
+                        <b class="ILL_blackOutline">{{wr.progress}}</b>
+                    </div>
+                </div>
+                <div (click)="approveSubmission(wr['id'])" class="m-2 rounded-full bg-green-600 w-[15%] p-1 text-lg select-none hover:scale-105 transition-all duration-200 flex flex-row items-center justify-center">
+                    <fa-icon [icon]="i_approve"></fa-icon>
+                </div>
+                <div (click)="rejectSubmission(wr['id'])" class="m-2 rounded-full bg-red-600 w-[15%] p-1 text-lg select-none hover:scale-105 transition-all duration-200 flex flex-row items-center justify-center">
+                    <fa-icon [icon]="i_reject"></fa-icon>
+                </div>
+            </div>
+
+            <!-- no wrs -->
+            <div class="flex flex-col items-center justify-center p-3 m-2 rounded-xl bg-slate-400 dark:bg-slate-800 text-black dark:text-white" *ngIf="pending_wr_list.length == 0">
+                <b>Every WR is reviewed. Woo hoo!</b>
+                <img src="../../../assets/mascotts/mascott_jerry.png"/>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Log -->
+    <div class="flex flex-col">
+        <div class="flex flex-col bg-slate-300 dark:bg-slate-700 rounded-2xl mx-3 my-2 p-3 w-[620px]">
+            <b class="dark:text-white text-lg">WR functions:</b>
+            <b class="dark:text-white text-lg font-normal">Actions:</b>
+            <button (click)="removeAllRejectedSubmissions()" class="m-1 p-2 rounded-full bg-red-500 text-white shadow-lg hover:scale-105 transition-all duration-300">Remove all rejected WRs</button>
+            <button (click)="removeAllPendingSubmissions()" class="m-1 p-2 rounded-full bg-orange-500 text-white shadow-lg hover:scale-105 transition-all duration-300">Remove all pending WRs</button>
+        </div>
+        <div class="flex flex-col bg-slate-300 dark:bg-slate-700 rounded-2xl mx-3 my-2 p-3 w-[620px]">
+            <b class="dark:text-white text-lg">Audit log:</b>
+            <div class="flex flex-col overflow-auto">
+                <!-- Single log message -->
+                <div class="p-2 my-1 rounded-r-full bg-slate-400 dark:bg-slate-800 dark:text-white text-black" *ngFor="let msg of audit_log">
+                    <b>> {{msg}}</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

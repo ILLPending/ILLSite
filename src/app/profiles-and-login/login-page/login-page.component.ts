@@ -27,7 +27,7 @@ export class LoginPageComponent implements OnInit {
     this.lb_err = '';
     await this.authService.signIn(this.userEmail, this.userPassword).catch(err => {
       this.lb_err = err.toString();
-      this.lb_err = this.lb_err.replace('FirebaseError: Firebase: The email address is badly formatted. (auth/invalid-email).', 'Invalid Email');
+      this.lb_err = this.lb_err.replace('ClientResponseError 400: Failed to authenticate.', 'Incorrect credentials');
       this.lb_err = this.lb_err.replace('FirebaseError: Firebase: An internal AuthError has occurred. (auth/internal-error).', 'Email or password are incorrectly written/not filled');
       this.lb_err = this.lb_err.replace('FirebaseError: Firebase: The email address is already in use by another account. (auth/email-already-in-use).', 'Email is already in use');
       this.lb_err = this.lb_err.replace('FirebaseError: Firebase: There is no user record corresponding to this identifier. The user may have been deleted. (auth/user-not-found).', "This email doesn't exist. Create a new account!");

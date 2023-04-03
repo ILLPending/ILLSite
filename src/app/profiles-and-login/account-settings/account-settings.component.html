@@ -9,7 +9,7 @@
                 <p class="text-red-500 text-lg">{{bil_errLabel}}</p>
             </div>
             <fa-icon [icon]="i_gear" class="lg:text-5xl text-xl dark:text-white animate-spin" *ngIf="bil_showUploadAnim"></fa-icon>
-            <img src={{bil_profilepicture}} class="aspect-square lg:w-[128px] w-[72px] m-2 rounded-xl shadow-xl"/>
+            <img src="{{user['avatar_url']}}" alt="{{user['avatar_url']}}" class="aspect-square lg:w-[128px] w-[72px] m-2 rounded-xl shadow-xl"/>
         </div>
         <input maxlength="50" (change)="usernameChange($event)" id="ILLA_Acc_username" [(ngModel)]="bil_username" class="p-2 m-2 rounded-xl shadow-lg border-l-4 border-blue-500" type="text" placeholder="Type in a username"/>
         <input maxlength="150" id="ILLA_Acc_gd name" [(ngModel)]="bil_gd_username" class="p-2 m-2 rounded-xl shadow-lg border-l-4 border-blue-500" type="text" placeholder="Type in your GD username (optional)"/>

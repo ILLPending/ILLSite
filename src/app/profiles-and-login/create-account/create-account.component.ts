@@ -42,10 +42,8 @@ export class CreateAccountComponent implements OnInit {
   async createNewAccount() {
     await this.authService.createAccount(this.userName, this.userEmail, this.userPassword).catch(err => {
       this.lb_err = err.toString();
-      this.lb_err = this.lb_err.replace('FirebaseError: Firebase: The email address is badly formatted. (auth/invalid-email).', 'Invalid Email');
-      this.lb_err = this.lb_err.replace('FirebaseError: Firebase: An internal AuthError has occurred. (auth/internal-error).', 'Email or password are incorrectly written/not filled');
+      this.lb_err = this.lb_err.replace('ClientResponseError 400: Failed to create record.', 'Email or password are incorrectly written/not filled');
       this.lb_err = this.lb_err.replace('FirebaseError: Firebase: The email address is already in use by another account. (auth/email-already-in-use).', 'Email is already in use');
-
     })
     if(this.lb_err == '') {
       this.router.navigate(['../home']);

@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { 
-  AngularFirestore, DocumentReference,
- } from '@angular/fire/compat/firestore';
+import Pocketbase from 'pocketbase'
 import { WrSubmission } from './wr-submission';
 import { AuthService } from './auth.service';
 import { last } from 'rxjs/operators';
@@ -13,36 +11,33 @@ import { Router } from '@angular/router';
 export class WrServiceService {
 
   constructor(
-    public firestore: AngularFirestore,
     private authService: AuthService,
     private router: Router,
-  ) { }
+  ) { 
+    
+  }
+  pb = new Pocketbase('https://139.144.183.80:433')
 
-  submitWR(wr:WrSubmission, key:string) {
+  async submitWR(wr:WrSubmission) {
     let _wr = wr;
     _wr.status = 'pending';
     _wr.submitted_at = Date.now();
-    _wr.$key = key;
-    return this.firestore.collection('wr-sumbissions').doc(key).set(_wr);
+    _wr.$key = '';
+    let record = await this.pb.collection('wr_submissions').create(_wr)
+    _wr.$key = record.id
+    return this.pb.collection('wr_submissions').update(_wr.$key, _wr)
   }
 
   async getWRFromID(id:string) {
-    let _wrObj:WrSubmission[] = []
-    await this.firestore.collection('wr-sumbissions').ref.where('$key', '==', id).get().then(snapshot => {
-      _wrObj = snapshot.docs.map((e:any) => {
-        return e.data();
-      })
-    })
-
-    return _wrObj[0];
+    return await this.pb.collection('wr_submissions').getOne<WrSubmission>(id)
   }
 
   changeWRStatus(wrKey:string, status:string, reason?: string) {
-    return this.firestore.collection('wr-sumbissions').doc(wrKey).set({status: status, reject_reason: reason}, {merge: true});
+    return this.pb.collection('wr_submissions').update(wrKey, {status: status, reject_reason: reason})
   }
 
-  getAllSubmissions() {
-    return this.firestore.collection('wr-sumbissions').ref.orderBy('submitted_at', 'desc').get();
+  async getAllSubmissions() {
+    return await this.pb.collection('wr_submissions').getFullList<WrSubmission>(200)
   }
 
   openWRPage(wr:WrSubmission) {

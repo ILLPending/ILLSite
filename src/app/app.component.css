@@ -15,8 +15,8 @@
 }
 
 .ILL_NavbarBtn {
-    @apply font-light w-full h-full lg:p-2 p-1 hover:border-b-4 hover:border-blue-500 transition-all duration-300 select-none
-    lg:text-lg text-xs flex lg:flex-row flex-col text-center lg:text-left items-center mx-0
+    @apply font-normal lg:p-2 p-1 transition-all duration-300 select-none hover:scale-105
+    lg:text-sm text-xs flex lg:flex-row lg:items-center flex-col text-center lg:text-left items-center mx-0  
 }
 
 .ILL_ProfileBtn {
@@ -26,10 +26,126 @@
 .ILL_BG {
     background-image: url('../assets/BG_Light1.png');
     background-size: cover;
-    @apply w-screen h-screen fixed -z-20 top-0
+    @apply w-screen h-screen fixed -z-20 top-0 blur-lg
 }
-.ILL_BG_Dark {
-    background-image: url('../assets/BG_Dark1.png');
-    background-size: cover;
-    @apply w-screen h-screen fixed -z-20 top-0
+
+@keyframes slide_left {
+    from {
+        opacity: 0%;
+        transform: translateX(-75%);
+    }
+    
+    to {
+        opacity: 100%;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes slide_right {
+    from {
+        opacity: 0%;
+        transform: translateX(75%);
+    }
+    
+    to {
+        opacity: 100%;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes slide_up {
+    from {
+        opacity: 0%;
+        transform: translateY(75%);
+    }
+    
+    to {
+        opacity: 100%;
+        transform: translateY(0%);
+    }
+}
+
+@keyframes slide_down {
+    from {
+        opacity: 0%;
+        transform: translateY(-75%);
+    }
+    
+    to {
+        opacity: 100%;
+        transform: translateY(0%);
+    }
+}
+
+@keyframes fade_in {
+    from {
+        opacity: 0%;
+    }
+    
+    to {
+        opacity: 100%;
+    }
+}
+
+.ILL_SlideInAnimL {
+    animation: slide_left 3s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimR {
+    animation: slide_right 3s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimU {
+    animation: slide_up 3s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimD {
+    animation: slide_down 3s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimLQ {
+    animation: slide_left 0.75s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimRQ {
+    animation: slide_right 0.75s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimUQ {
+    animation: slide_up 0.75s cubic-bezier(0, 0, 0.21, 0.99);
+}
+.ILL_SlideInAnimDQ {
+    animation: slide_down 0.75s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_Sidebar_L {
+    background: url('../assets/SideBar_Light_L.png');
+    background-size: contain;
+    background-repeat: repeat-y;
+    height: 9000%;
+}
+
+.ILL_Sidebar_R {
+    background: url('../assets/SideBar_Light_R.png');
+    background-size: contain;
+    background-repeat: repeat-y;
+    height: 9000%;
+}
+
+.ILL_Sidebar_LD {
+    background: url('../assets/SideBar_Dark_L.png');
+    background-size: contain;
+    background-repeat: repeat-y;
+    height: 9000%;
+}
+
+.ILL_Sidebar_RD {
+    background: url('../assets/SideBar_Dark_R.png');
+    background-size: contain;
+    background-repeat: repeat-y;
+    height: 9000%;
+}
+
+.ILL_FadeIn {
+    animation: fade_in 1s cubic-bezier(0, 0, 0.21, 0.99);
 }

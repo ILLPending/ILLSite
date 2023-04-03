@@ -29,10 +29,6 @@ import { FaqComponent } from './main-list-page/faq/faq.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RoleElemComponent } from './misc/role-elem/role-elem.component';
 import { AccountSettingsComponent } from './profiles-and-login/account-settings/account-settings.component';
-import { LeaderboardListComponent } from './ILLP/leaderboard-list/leaderboard-list.component';
-import { LeaderboardElementComponent } from './ILLP/leaderboard-element/leaderboard-element.component';
-import { LeaderboardCreatorComponent } from './ILLP/leaderboard-creator/leaderboard-creator.component';
-import { HallOfFameElementComponent } from './ILLP/hall-of-fame-element/hall-of-fame-element.component';
 import { ProfilePageComponent } from './profiles-and-login/profile-page/profile-page.component';
 import { BundleComponent } from './ILLP/bundle/bundle.component';
 import { WrWidgetComponent } from './ILLP/wr-widget/wr-widget.component';
@@ -41,8 +37,17 @@ import { BundlePageComponent } from './ILLP/bundle-page/bundle-page.component';
 import { IllpHomePageComponent } from './ILLP/illp-home-page/illp-home-page.component';
 import { WrSubmissionPageComponent } from './ILLP/wr-submission-page/wr-submission-page.component'
 
+import Pocketbase from 'pocketbase'
+
 //adsense
 import { AdsenseModule } from 'ng2-adsense';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { AuthService } from './shared/auth.service';
+import { AdminDataListComponent } from './admin-panel/admin-data-list/admin-data-list.component';
+import { AdminWrPanelComponent } from './admin-panel/admin-wr-panel/admin-wr-panel.component';
+import { AdminIllpPanelComponent } from './admin-panel/admin-illp-panel/admin-illp-panel.component';
+import { AdminProfilesPanelComponent } from './admin-panel/admin-profiles-panel/admin-profiles-panel.component';
+import { AdminMiscPanelComponent } from './admin-panel/admin-misc-panel/admin-misc-panel.component';
 
 @NgModule({
   declarations: [
@@ -56,10 +61,6 @@ import { AdsenseModule } from 'ng2-adsense';
     FaqComponent,
     RoleElemComponent,
     AccountSettingsComponent,
-    LeaderboardListComponent,
-    LeaderboardElementComponent,
-    LeaderboardCreatorComponent,
-    HallOfFameElementComponent,
     ProfilePageComponent,
     BundleComponent,
     WrWidgetComponent,
@@ -67,6 +68,11 @@ import { AdsenseModule } from 'ng2-adsense';
     BundlePageComponent,
     IllpHomePageComponent,
     WrSubmissionPageComponent,
+    AdminDataListComponent,
+    AdminWrPanelComponent,
+    AdminIllpPanelComponent,
+    AdminProfilesPanelComponent,
+    AdminMiscPanelComponent,
   ],
   imports: [
     BrowserModule,
@@ -77,11 +83,9 @@ import { AdsenseModule } from 'ng2-adsense';
     FormsModule,
     ScrollingModule,
     FontAwesomeModule,
-    AdsenseModule.forRoot({
-      adClient: "ca-pub-6150612020055423"
-    }),
+    HttpClientModule
   ],
-  providers: [LevelServiceService],
+  providers: [LevelServiceService, AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

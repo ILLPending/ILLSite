@@ -5,8 +5,6 @@ import { User } from 'firebase/auth';
 import { async, last } from 'rxjs';
 import { AuthService } from 'src/app/shared/auth.service';
 import { Roles, UserData } from 'src/app/shared/user-data';
-import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
-
 
 @Component({
   selector: 'app-account-settings',
@@ -24,7 +22,7 @@ export class AccountSettingsComponent implements OnInit {
   bil_profilepicture:string | undefined = '';
   bil_email:string | undefined = ''
   bil_roles:Roles | undefined;
-  bil_pfp_file:File | undefined;
+  bil_pfp_file: File | undefined;
   bil_errLabel:string = '';
   bil_uid:string | undefined = '';
 
@@ -51,19 +49,17 @@ export class AccountSettingsComponent implements OnInit {
     this.loadUserData();
   }
 
-  loadUserData() {
-    this.authService.user$.subscribe((_usr) => {
-      if(_usr != undefined || _usr != null) {
-        this._user_uid = _usr.uid
-        this.bil_username = _usr.username;
-        this.bil_gd_username = _usr.gd_username;
-        this.bil_old_gd_username = _usr.gd_username;
-        this.bil_bio = _usr.description;
-        this.bil_shownInLeaderboards = _usr.show_in_leaderboards;
-        this.bil_profilepicture = _usr.profilePicture
-        this.bil_uid = _usr.uid;
-      }
-    })
+  async loadUserData() {
+    if(this.authService.pb.authStore.model != null) {
+      let _usr = await this.authService.pb.collection('users').getOne(this.authService.pb.authStore.model.id)
+      this._user_uid = this.authService.pb.authStore.model.id
+      this.bil_username = _usr['username'];
+      this.bil_gd_username = _usr['gd_username'];
+      this.bil_old_gd_username = _usr['gd_username'];
+      this.bil_bio = _usr['description'];
+      this.bil_shownInLeaderboards = _usr['show_in_leaderboards'];
+      this.bil_uid = _usr['uid'];
+    }
   }
 
   packageUserData() {
@@ -80,13 +76,10 @@ export class AccountSettingsComponent implements OnInit {
   async updateUserData() {
     this.packageUserData();
     //get matching usernames
-    let _temp_mtch_usr:UserData[] = []
-    await this.authService.firestore.collection('user').ref.where('gd_username', '==', this.bil_gd_username).get().then(snapshot => {
-      _temp_mtch_usr = snapshot.docs.map((e:any) => {
-        const data = e.data();
-        return data;
-      })
-    })
+    let _temp_mtch_usr:any[];
+
+    _temp_mtch_usr = await this.authService.pb.collection('users').getFullList(200, { filter: "gd_username = '"+this.bil_gd_username+"'"})
+    console.log(_temp_mtch_usr)
 
     if(this.bil_username && this.bil_username?.length > 150) {
       this.bil_errLabel = 'Your username is too long!'
@@ -102,18 +95,22 @@ export class AccountSettingsComponent implements OnInit {
 
     }
     if(this.bil_gd_username && this.bil_gd_username?.length > 0) {
-      if(_temp_mtch_usr.length == 0 || _temp_mtch_usr[0].uid == this.bil_uid) {
-        this.bil_canContinue = true;
+      if(_temp_mtch_usr.length > 0 && this.authService.pb.authStore.model) {
+        if(_temp_mtch_usr[0]['id'] == this.authService.pb.authStore.model.id) {
+          this.bil_canContinue = true;
+        } else {
+          this.bil_errLabel = 'A user with this gd username is already on the website!'
+          this.bil_canContinue = false
+        }
       } else {
-        this.bil_errLabel = 'A user with this gd username is already on the website!'
-        this.bil_canContinue = false
+        this.bil_canContinue = true;
       }
     } else {
       //gd username is empty
       this.bil_canContinue = true;
     }
-    if(this.bil_canContinue) {
-      this.authService.firestore.collection('user').doc(this._user_uid).set(this.buffer_user, { merge: true });
+    if(this.bil_canContinue && this._user_uid) {
+      this.authService.pb.collection('users').update(this._user_uid, this.buffer_user)
       this.router.navigate(["/"]);
     }
   }
@@ -130,17 +127,28 @@ export class AccountSettingsComponent implements OnInit {
   async updatePFP() {
     //setup
     this.bil_showUploadAnim = true;
-    const pfp_path = `/ILL_profilepics/pfp_${this._user_uid}_${this.bil_username}_${Date.now()}.png`
-    const ref = this.storage.ref(pfp_path);
-
-    await this.storage.upload(pfp_path, this.bil_pfp_file);
-    this.authService.firestore.collection('user').doc(this._user_uid).set({profilePicture: await ref.getDownloadURL().toPromise()}, { merge: true });
-    this.bil_showUploadAnim = false;
-    if(this.bil_pfp_file?.size != undefined && this.bil_pfp_file?.size < 1080549) {
-    } else {
+    const formData = new FormData()
+    if(this.bil_pfp_file) {
+      formData.append('avatar', this.bil_pfp_file)
     }
-    this.bil_errLabel = 'File cannot be larger than 1MB'
-    this.bil_showUploadAnim = false;
+    if(this.bil_pfp_file && this.bil_pfp_file.size < 1080549) {
+      if(this._user_uid && this.authService.pb.authStore.model) {
+        await this.authService.pb.collection('users').update(this._user_uid, formData).catch((r) => console.log(r))
+        
+        //fix up avatar url
+        let record = await this.authService.pb.collection('users').getOne(this.authService.pb.authStore.model.id);
+        console.log(record['avatar'])
+        let _obj = {
+          avatar_url: `http://139.144.183.80:8090/api/files/_pb_users_auth_/${this._user_uid}/${record['avatar']}`
+        }
+        await this.authService.pb.collection('users').update(this._user_uid, _obj).catch((r) => console.log(r))
+        this.bil_showUploadAnim = false;
+      }
+    } else {
+      this.bil_errLabel = 'File cannot be larger than 1MB'
+      this.bil_showUploadAnim = false;
+    }
+
   }
   
   cancelUserUpdate() {

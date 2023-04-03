@@ -1,3 +1,39 @@
-<div class="flex flex-row pt-16">
-    <app-admin-data-editor></app-admin-data-editor>
+<!-- Admin panel -->
+<div class="flex lg:flex-row flex-col pt-16 lg:w-full w-screen">
+    <div class="flex flex-col lg:flex-nowrap flex-wrap w-full">
+        <!-- Tab switcher -->
+        <div class="mx-5 my-2 rounded-full dark:bg-slate-700 bg-slate-300 overflow-hidden flex flex-row items-center justify-around p-0">
+            <div (click)="changeTab('list')" class="flex flex-row items-center justify-center select-none bg-slate-300 hover:bg-slate-400 dark:text-white dark:bg-slate-700 dark:hover:bg-slate-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_list" class="m-2  text-2xl"></fa-icon>
+                <b>Levels</b>
+            </div>
+            <div (click)="changeTab('illp')" class="flex flex-row items-center justify-center select-none bg-slate-300 hover:bg-slate-400 dark:text-white dark:bg-slate-700 dark:hover:bg-slate-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_illp" class="m-2  text-2xl"></fa-icon>
+                <b>ILLP</b>
+            </div>
+            <div (click)="changeTab('wrs')" class="flex flex-row items-center justify-center select-none bg-slate-300 hover:bg-slate-400 dark:text-white dark:bg-slate-700 dark:hover:bg-slate-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_wrs" class="m-2  text-2xl"></fa-icon>
+                <b>World Records</b>
+            </div>
+            <div (click)="changeTab('profiles')" class="flex flex-row items-center justify-center select-none bg-slate-300 hover:bg-slate-400 dark:text-white dark:bg-slate-700 dark:hover:bg-slate-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_profiles" class="m-2  text-2xl"></fa-icon>
+                <b>Profiles</b>
+            </div>
+            <div (click)="changeTab('misc')" class="flex flex-row items-center justify-center select-none bg-slate-300 hover:bg-slate-400 dark:text-white dark:bg-slate-700 dark:hover:bg-slate-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_misc" class="m-2  text-2xl"></fa-icon>
+                <b>Misc</b>
+            </div>
+        </div>
+
+        <!-- List -->
+        <app-admin-data-editor *ngIf="current_tab == 'list'"></app-admin-data-editor>
+        <!-- ILLP -->
+        <app-admin-illp-panel *ngIf="current_tab == 'illp'"></app-admin-illp-panel>
+        <!-- WRs -->
+        <app-admin-wr-panel *ngIf="current_tab == 'wrs'"></app-admin-wr-panel>
+        <!-- Profiles -->
+        <app-admin-profiles-panel *ngIf="current_tab == 'profiles'"></app-admin-profiles-panel>
+        <!-- Misc -->
+        <app-admin-misc-panel *ngIf="current_tab == 'misc'"></app-admin-misc-panel>
+    </div>
 </div>

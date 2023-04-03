@@ -6,39 +6,46 @@ import Pocketbase from 'pocketbase'
   providedIn: 'root'
 })
 export class LevelServiceService {
-  constructor(public pb: Pocketbase) {
-    pb = new Pocketbase('http://127.0.0.1:8090')
+  constructor() {
   }
-  
-  ill_unordered:ImpossibleLevel[] = [];
-  ill_ordered:ImpossibleLevel[] = [];
+
+  pb = new Pocketbase('https://139.144.183.80:433')
 
 
   getEntireLevelList() {
-    return this.pb.collection('ill').getFullList()
+    return this.pb.collection('ill').getFullList<ImpossibleLevel>(200)
   }
 
   getWholeLevelList() {
-    return this.pb.collection('ill').getFullList()
+    return this.pb.collection('ill').getFullList<ImpossibleLevel>(200)
   }
 
   async getOrderedLevelList() {
-    let arr = await this.pb.collection('ill').getFullList<ImpossibleLevel>(100, { sort: '-position' })
-    console.log(arr);
+    let arr = await this.pb.collection('ill').getFullList<ImpossibleLevel>(100, { sort: 'position', $autoCancel: false})
     return arr
   }
 
-  async addLevel(level:ImpossibleLevel) {
-    const record = await this.pb.collection("ill").create(level);
-    level.id = record.id
-    return await this.pb.collection("ill").update(level.id, level);
+  addLevel(level:ImpossibleLevel) {
+    
+    // level.id = record.id
+    return this.pb.collection("ill").create(level);
   }
 
   updateLevel(level:ImpossibleLevel) {
-    return this.pb.collection("ill").update(level.id, level);
+    if(level.id) {
+      return this.pb.collection("ill").update(level.id, level);
+    } else {
+      console.error('invalid id lol')
+      return undefined
+    }
   }
 
   deleteLevel(level:ImpossibleLevel) {
-    return this.pb.collection(`ill`).delete(level.id)
+    if(level.id) {
+      return this.pb.collection(`ill`).delete(level.id)
+    } else {
+      console.error('invalid id lol')
+      return undefined
+    }
   }
 }

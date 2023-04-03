@@ -1,5 +1,5 @@
 export interface ImpossibleLevel {
-    id: string,
+    id?: string,
     position: number,
     name: string,
     fps: number,
@@ -7,8 +7,8 @@ export interface ImpossibleLevel {
     gd_version: string,
     yt_videoID: string,
     creators_short: string,
-    creators_full: string[],
-    tags: string[],
+    creators_full: string,
+    tags: string,
     uploader: string,
     wr_min_percent: string,
     wr: string,
@@ -16,10 +16,7 @@ export interface ImpossibleLevel {
     marked_for_removal: boolean,
     annotated: boolean,
     marking_reason: string,
-    nameLowercase?: string,
-    creators_full_lowercase?: string[],
     wide_level_shot_url?: string,
-    tagsLowercase?: string[],
     textIsDark?: boolean,
     shouldHaveManualWR?:boolean,
 }

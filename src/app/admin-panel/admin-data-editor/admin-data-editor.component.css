@@ -23,3 +23,7 @@
 .ILL_AdminScroll::-webkit-scrollbar-thumb:hover {
   background: #0f172a;
 }
+
+.ILL_TextField {
+  @apply mx-1 p-2 rounded-full text-black border-white border-2 hover:border-blue-500 transition-all duration-200
+}

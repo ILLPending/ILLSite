@@ -3,14 +3,14 @@
         <!-- Profile data -->
         <div class="dark:bg-slate-700 bg-slate-300 m-2 p-4 rounded-lg flex flex-col xl:w-[640px] lg:w-[360px]">
             <div class="flex flex-row">
-                <img src="{{user_data.profilePicture}}" class="aspect-square rounded-full xl:w-48 xl:h-48 lg:w-24 lg:h-24 w-16 h-16"/>
+                <img src="{{user_data.avatar_url}}" class="aspect-square rounded-full xl:w-48 xl:h-48 lg:w-24 lg:h-24 w-16 h-16"/>
                 <div class="flex flex-col ml-4">
                     <b class="dark:text-white font-semibold text-xl"><fa-icon [icon]="i_user" class="m-1"></fa-icon> {{user_data.username}}</b>
-                    <b class="dark:text-slate-400 text-slate-500 font-normal text-sm">({{user_data.gd_username}}) <b *ngIf="user_data.verified"><fa-icon [icon]="i_verified" class="m-1"></fa-icon>Verified account</b></b>
+                    <b class="dark:text-slate-400 text-slate-500 font-normal text-sm">({{user_data.gd_username}}) <b *ngIf="user_data.ill_verified"><fa-icon [icon]="i_verified" class="m-1"></fa-icon>Verified account</b></b>
                     <div class="flex flex-row flex-wrap xl:scale-100">
-                        <app-role-elem *ngFor="let role of user_data.badges" [roleName]="role"></app-role-elem>
+                        <app-role-elem *ngFor="let role of user_badges" [roleName]="role"></app-role-elem>
                     </div>
-                    <b class="dark:text-slate-200 text-slate-700 font-normal"><fa-icon [icon]="i_cup" class="m-1"></fa-icon>ILL points: {{user_data.ill_points}}</b>
+                    <b class="dark:text-slate-200 text-slate-700 font-normal"><fa-icon [icon]="i_cup" class="m-1"></fa-icon>ILL points: {{user_data.illp_points}}</b>
                     <b class="dark:text-slate-200 text-slate-700 font-normal"><fa-icon [icon]="i_count" class="m-1"></fa-icon>Created levels: {{user_data.created_levels}}</b>
                     <b class="dark:text-slate-200 text-slate-700 font-normal"><fa-icon [icon]="i_star" class="m-1"></fa-icon>Completed bundles: N/A</b>
                 </div>
@@ -18,7 +18,7 @@
         </div>
         <!-- Admin ctrl -->
         <div *ngIf="authService.user$ | async as user">
-            <div class="dark:bg-slate-600 bg-slate-300 m-2 p-4 rounded-lg flex flex-col xl:w-[640px] lg:w-[360px]" *ngIf="user.roles.admin">
+            <div class="dark:bg-slate-600 bg-slate-300 m-2 p-4 rounded-lg flex flex-col xl:w-[640px] lg:w-[360px]" *ngIf="user['permissions'] == 'listAdmin'">
                 <button (click)="toggleVerified()" class="m-2 p-2 bg-blue-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" >Toggle User verified mark</button>
                 <div class="flex flex-row w-full items-center justify-between">
                     <input class="rounded-xl border-l-4 border-blue-500 p-2 m-2 text-black w-full" [(ngModel)]="adm_newUsername" type="text" placeholder="New username"/>
@@ -49,15 +49,32 @@
 
         <!-- Completed bundles -->
         <div class="dark:bg-slate-600 bg-slate-300 m-2 p-4 rounded-lg flex flex-col xl:w-[640px] lg:w-[360px] h-[480px]">
-            <div class="m-auto flex flex-col">
-                <b class="dark:text-white text-2xl text-center">Completed Bundles/Levels go here</b>
-                <b class="dark:text-slate-200 text-lg text-center font-normal">Coming soon ;)</b>
+            <b class="dark:text-white font-semibold text-lg"><fa-icon [icon]="i_cup" class="m-1"></fa-icon>Achievements:</b>
+            <div class="flex flex-row m-1 rounded-xl bg-local bg-left-top items-center dark:text-white h-16"
+                style="background-image: url({{user_wideshots[i]}});"
+                *ngFor="let wr of user_wrs; index as i">
+                    <a class="mx-1 font-semibold text-lg ILL_blackOutline" [routerLink]="'/wr/'+wr['id']"><fa-icon class="mx-2" [icon]="i_link"></fa-icon>{{wr['level_name']}}</a>
+                    <b class="mx-1 font-normal mr-auto text-sm ILL_blackOutline">{{wr['progress']}}</b>
+                    <b *ngIf="wr['status'] == 'Rejected'" class="ml-auto font-normal mr-4 text-sm bg-red-600 text-bold rounded-full p-2 select-none shadow-lg">Rejected</b>
+                    <b *ngIf="wr['status'] == 'Approved'" class="ml-auto font-normal mr-4 text-sm bg-lime-400 text-bold rounded-full p-2 select-none shadow-lg">Accepted</b>
+                    <b *ngIf="wr['status'] == 'pending'" class="ml-auto font-normal mr-4 text-sm bg-neutral-400 text-bold rounded-full p-2 select-none shadow-lg">Pending</b>
             </div>
+            <!-- * Placeholder element here -->
+            <!-- <div class="flex flex-row m-1 rounded-xl bg-local bg-left-top items-center dark:text-white h-16"
+                style="background-image: url(https://media.discordapp.net/attachments/752148349787963492/1043926585432084530/image.png?width=1440&height=195);"
+                >
+                    <a class="mx-1 font-semibold text-lg" [routerLink]="'/wr/404'"><fa-icon class="mx-2" [icon]="i_link"></fa-icon>CYCLOLCYC</a>
+                    <b class="mx-1 font-normal mr-auto text-sm">Sum Progress</b>
+                    <b class="ml-auto font-normal mr-4 text-sm bg-red-600 text-bold rounded-full p-2 select-none">Rejected</b>
+                    <b class="ml-auto font-normal mr-4 text-sm bg-lime-400 text-bold rounded-full p-2 select-none">Approved</b>
+                    <b class="ml-auto font-normal mr-4 text-sm bg-neutral-400 text-bold rounded-full p-2 select-none">Pending</b>
+            </div> -->
+            
         </div>
     </div>
 
     <!-- Levels -->
-    <div class="xl:mx-8 mx-0 flex-col items-center w-full">
+    <div class="xl:mx-8 mx-0 flex-col items-center w-full lg:mb-0 mb-64">
         <app-list-element *ngFor="let lvl of user_levels" [ill_level]="lvl"></app-list-element>
     </div>
 </div>

@@ -1,30 +1,30 @@
 <div class="group rounded-t-3xl rounded-b-lg transition-all duration-200 z-20 
-dark:bg-[#1e293b] bg-[#cbd5e1] my-2 mx-0 lg:h-fit" id="ILL_levelCard">
+dark:bg-[#1e293b] bg-[#cbd5e1] my-2 lg:h-fit" id="ILL_levelCard">
     <div class="flex flex-col h-full items-stretch justify-between">
 
         <!-- =====List Item Top===== -->
-        <div class="flex flex-row items-stretch justify-evenly bg-local bg-left-top w-full lg:h-full h-[172px] lg:overflow-x-visible overflow-x-hidden rounded-t-3xl bg-cover"
+        <div class="flex flex-row items-stretch justify-evenly bg-local bg-left-top w-full lg:h-full h-[128px] lg:overflow-x-visible overflow-x-hidden rounded-t-3xl bg-cover transition-all"
         style="background-image: url({{ill_level.wide_level_shot_url}});" (click)="expandCard()">
             <!-- Thumbnail -->
-            <img [src]="card_yt_thumbnailURL" class="xl:w-[360px] lg:w-[172px] w-0 lg:relative absolute aspect-video 
-            rounded-tl-3xl shadow-xl lg:border-r-8 border-0 border-slate-200 dark:border-slate-700">
+            <img loading="lazy" [src]="card_yt_thumbnailURL" class="xl:w-[360px] lg:w-[172px] w-0 lg:relative absolute aspect-video 
+            rounded-tl-3xl shadow-xl">
 
             <!-- Level position -->
             
             <!-- Light -->
             <b class="font-semibold p-2 left-0 xl:text-5xl lg:text-4xl text-3xl align-middle 
             my-auto m-3 select-none text-white ILL_textFX ILL_placementFont ILL_blackOutline" *ngIf="card_haswideshot && !ill_level.textIsDark">
-                {{ '#' + level_position }}
+                {{ '#' + ill_level.position }}
             </b>
             <!-- Dark -->
             <b class="font-semibold p-2 left-0 xl:text-5xl lg:text-4xl text-3xl align-middle 
             my-auto m-3 select-none text-[#071013] ILL_textFX ILL_placementFont ILL_whiteOutline" *ngIf="card_haswideshot && ill_level.textIsDark">
-                {{ '#' + level_position }}
+                {{ '#' + ill_level.position }}
             </b>
 
             <b class="font-semibold p-2 left-0 xl:text-5xl lg:text-4xl text-3xl align-middle 
             my-auto m-3 select-none dark:text-white text-[#071013] ILL_placementFont" *ngIf="!card_haswideshot">
-                {{ '#' + level_position }}
+                {{ '#' + ill_level.position }}
             </b>
 
             <!-- Name, creator and etc -->
@@ -35,39 +35,39 @@ dark:bg-[#1e293b] bg-[#cbd5e1] my-2 mx-0 lg:h-fit" id="ILL_levelCard">
 
                     <!-- Light -->
                     <div class="flex flex-col items-start justify-start w-fit text-white xl:group-hover:scale-125 transition-all duration-300 origin-left" *ngIf="card_haswideshot && !ill_level.textIsDark">
-                        <b class="font-extrabold xl:text-2xl lg:text-lg text-2xl w-fit ILL_blackOutline">
-                            {{ level_name }}
+                        <b class="font-extrabold xl:text-2xl lg:text-lg text-md w-fit ILL_blackOutline">
+                            {{ ill_level.name }}
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-red-500" *ngIf="level_marked_for_removal" [icon]="i_removal"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-gray-500" *ngIf="level_annotated" [icon]="i_annotation"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-amber-400" *ngIf="level_isRated" [icon]="i_rated"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-orange-600" *ngIf="level_isUnRated" [icon]="i_unrated"></fa-icon>
                             
                         </b>
-                        <i class="xl:text-xl lg:text-sm text-xl align-bottom p-1 font-semibold ILL_blackOutline">{{"by " + level_creators_short }}</i>
+                        <i class="xl:text-xl lg:text-sm text-md align-bottom p-1 font-semibold ILL_blackOutline">{{"by " + level_creators_short }}</i>
                     </div>
                     <!-- Dark -->
                     <div class="flex flex-col items-start justify-start w-fit text-[#071013] xl:group-hover:scale-125 transition-all duration-300 origin-left" *ngIf="card_haswideshot && ill_level.textIsDark">
-                        <b class="font-extrabold xl:text-2xl lg:text-lg text-2xl w-fit ILL_whiteOutline">
-                            {{ level_name }}
+                        <b class="font-extrabold xl:text-2xl lg:text-lg text-md w-fit ILL_whiteOutline">
+                            {{ ill_level.name }}
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-red-500" *ngIf="level_marked_for_removal" [icon]="i_removal"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-gray-500" *ngIf="level_annotated" [icon]="i_annotation"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-amber-400" *ngIf="level_isRated" [icon]="i_rated"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-orange-600" *ngIf="level_isUnRated" [icon]="i_unrated"></fa-icon>
                             
                         </b>
-                        <i class="xl:text-xl lg:text-sm text-xl align-bottom p-1 font-semibold ILL_whiteOutline">{{"by " + level_creators_short }}</i>
+                        <i class="xl:text-xl lg:text-sm text-md align-bottom p-1 font-semibold ILL_whiteOutline">{{"by " + level_creators_short }}</i>
                     </div>
                     <!-- No wideshot name + data -->
                     <div class="flex flex-col items-start justify-start w-fit dark:text-white text-[#071013] xl:group-hover:scale-125 transition-all duration-300 origin-left" *ngIf="!card_haswideshot">
-                        <b class="font-extrabold xl:text-2xl lg:text-lg text-2xl w-fit">
-                            {{ level_name }}
+                        <b class="font-extrabold xl:text-2xl lg:text-lg text-md w-fit">
+                            {{ ill_level.name }}
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-red-500" *ngIf="level_marked_for_removal" [icon]="i_removal"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-gray-500" *ngIf="level_annotated" [icon]="i_annotation"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-amber-400" *ngIf="level_isRated" [icon]="i_rated"></fa-icon>
                             <fa-icon class="xl:absolute xl:scale-0 relative scale-100 align-middle m-1 text-orange-600" *ngIf="level_isUnRated" [icon]="i_unrated"></fa-icon>
                             
                         </b>
-                        <i class="xl:text-xl lg:text-sm text-xl align-bottom p-1 font-semibold">{{"by " + level_creators_short }}</i>
+                        <i class="xl:text-xl lg:text-sm text-md align-bottom p-1 font-semibold">{{"by " + level_creators_short }}</i>
                     </div>
 
                     <div class="flex flex-col h-full items-end justify-between">
@@ -129,9 +129,9 @@ dark:bg-[#1e293b] bg-[#cbd5e1] my-2 mx-0 lg:h-fit" id="ILL_levelCard">
                         </div>
 
                         <!-- pfps -->
-                        <div class="flex flex-row justify-start mb-1">
-                            <img *ngFor="let pfp of level_creatorPFPs_limited" src="{{pfp}}" class="w-[24px] aspect-square rounded-full mx-1 shadow-xl" />
-                            <div *ngIf="level_creatorPFPs.length > 3" class="w-[24px] aspect-square rounded-full mx-1 bg-slate-500 text-center flex items-center justify-center text-white"><fa-icon [icon]="i_more"></fa-icon></div>
+                        <div class="flex flex-row items-center justify-start mb-4 mr-3">
+                            <img loading="lazy" *ngFor="let pfp of level_creatorPFPs_limited" src="{{pfp}}" class="w-[6px] h-[6px] scale-[400%] aspect-square rounded-full mx-1 shadow-xl"/>
+                            <div *ngIf="level_creatorPFPs.length > 3" class="w-[6px] h-[6px] scale-[400%] aspect-square rounded-full mx-1 bg-slate-500 text-center flex items-center justify-center text-white"><fa-icon class="text-[4px] m-0 p-0" [icon]="i_more"></fa-icon></div>
                         </div>
                     </div>
                     
@@ -143,10 +143,10 @@ dark:bg-[#1e293b] bg-[#cbd5e1] my-2 mx-0 lg:h-fit" id="ILL_levelCard">
        
             
         <!-- Expanded list items -->
-        <div class="bg-[#cbd5e1] dark:bg-[#212d41] text-slate-700 dark:text-white transition-all duration-300" 
-        *ngIf="card_expanded || card_mobile_expanded">
-            <div class="flex flex-col items-stretch">
-                <div class="flex flex-row w-full border-b-4 dark:border-slate-900 border-slate-400">
+        <div class="bg-[#cbd5e1] dark:bg-[#212d41] text-slate-700 dark:text-white transition-all duration-300 bg-cover" 
+        *ngIf="card_expanded || card_mobile_expanded" style="background-image: url({{ill_level.wide_level_shot_url}});">
+            <div class="flex flex-col items-stretch backdrop-brightness-75 backdrop-blur-xl">
+                <div class="flex flex-row w-full">
                     <!-- Main video embed -->
                     <iframe class="h-fit aspect-video xl:p-3 p-0 lg:w-full w-0" 
                     [src]="card_yt_vidEmbedURL" title="YouTube video player" frameborder="0" 
@@ -154,7 +154,7 @@ dark:bg-[#1e293b] bg-[#cbd5e1] my-2 mx-0 lg:h-fit" id="ILL_levelCard">
     
                     <!-- Extra info -->
                     <div class="flex flex-col xl:items-start justify-start items-center xl:p-3 p-1 
-                    xl:text-lg text-xs overflow-y-auto xl:w-[512px] lg:w-full w-full xl:h-[480px] h-fit ILL_ListElemScroll dark:bg-[#192231] bg-[#bac4cf]">
+                    xl:text-lg text-xs overflow-y-auto xl:w-[512px] lg:w-full w-full xl:h-[480px] h-fit ILL_ListElemScroll backdrop-blur-sm backdrop-brightness-75">
 
                         <div class="w-full h-full">
                             <!-- Mobile embed -->
@@ -194,15 +194,15 @@ dark:bg-[#1e293b] bg-[#cbd5e1] my-2 mx-0 lg:h-fit" id="ILL_levelCard">
                                 <div class="flex flex-wrap justify-center ">
                                     <div *ngFor="let creator of level_creators_full" class="flex flex-row items-center w-fit bg-slate-200 dark:bg-slate-800 rounded-lg 
                                     font-bold shadow-lg transition-all duration-300 hover:scale-105 m-1 p-1">
-                                        <div *ngFor="let acc of level_creatorAccounts" class="flex flex-row" routerLink="/profile/{{acc.uid}}">
+                                        <div *ngFor="let acc of level_creatorAccounts" class="flex flex-row" routerLink="/profile/{{acc['id']}}">
                                             <fa-icon [icon]="i_link" *ngIf="acc.gd_username == creator"
-                                             (click)="scrollUp()"
+                                             (click)="scrollUp()" routerLink="/profile/{{acc['id']}}"
                                             class="text-xl hover:scale-110 transition-all duration-200"></fa-icon>
-                                            <img *ngIf="acc.gd_username == creator" src="{{acc.profilePicture}}" class="w-[24px] aspect-square rounded-full m-1"/>
+                                            <img *ngIf="acc.gd_username == creator" src="{{acc['avatar_url']}}" class="w-[24px] aspect-square rounded-full m-1"/>
                                         </div>
-                                        <i>
+                                        <a>
                                             {{ creator }}
-                                        </i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -214,35 +214,30 @@ dark:bg-[#1e293b] bg-[#cbd5e1] my-2 mx-0 lg:h-fit" id="ILL_levelCard">
                             <p class="font-semibold text-lg dark:text-white text-[#071013]"> <fa-icon class="m-1" [icon]="i_wr" ></fa-icon> World Record:
                             </p>
                             <b class="text-center font-normal">Last manually recorded WR: {{level_wr}}</b>
+                            <b class="text-center font-semibold">Minimum percentage required from 0: {{level_minimal_wr_percent}}%</b>
                             <app-wr-widget [wr_id_run]="level_wrID_run" [wr_id_run0]="level_wrID_0" *ngIf="!level_shouldHaveManualWR"></app-wr-widget>
                             <div class="flex flex-col p-3 rounded-xl bg-slate-400 dark:bg-slate-800 m-1" *ngIf="level_shouldHaveManualWR">
                                 <b>{{level_wr}}</b>
-                                <a class="p-2 m-1 text-lg bg-purple-500 rounded-full font-bold text-center" [href]="level_wr_yt">> Link <</a>
+                                <a class="p-2 m-1 text-lg bg-purple-500 rounded-full font-bold text-center hover:scale-105 hover:bg-purple-700 transition-all duration-200" [href]="level_wr_yt">> Link <</a>
+                            </div>
+                            <div class="flex flex-col p-3 rounded-xl bg-slate-400 dark:bg-slate-800 m-1" *ngIf="level_shouldHaveManualWR">
+                                <b>Feel like you can do better?</b>
+                                <a class="p-2 m-1 text-lg bg-green-500 rounded-full font-bold text-center hover:scale-105 hover:bg-green-700 transition-all duration-200" routerLink="/wr-submission">Submit your WR!</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6150612020055423"
-                    crossorigin="anonymous"></script>
-                <!-- ILL_ads_1 -->
-                <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-6150612020055423"
-                    data-ad-slot="7900567942"
-                    data-ad-format="auto"
-                    data-full-width-responsive="true"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
             </div>
         </div>
 
         
         <!-- Expand visual -->
         <div class="w-full h-fit dark:bg-[#2c3b55] bg-[#becad6] text-center dark:text-white text-[#071013] dark:group-hover:bg-[#314461] group-hover:bg-[#929aa3] rounded-b-lg
-        transition-all duration-200" (click)="expandCard()">
-            <fa-icon class="text-xl" *ngIf="!card_expanded && !card_mobile_expanded" [icon]="i_expand"></fa-icon>
-            <fa-icon class="text-xl" *ngIf="card_expanded || card_mobile_expanded" [icon]="i_collapse"></fa-icon>
+        transition-all duration-200 overflow-hidden hover:brightness-50" style="background-image: url({{ill_level.wide_level_shot_url}});" (click)="expandCard()">
+            <div class="backdrop-blur-lg transition-all duration-300">
+                <fa-icon class="text-xl" *ngIf="!card_expanded && !card_mobile_expanded" [icon]="i_expand"></fa-icon>
+                <fa-icon class="text-xl" *ngIf="card_expanded || card_mobile_expanded" [icon]="i_collapse"></fa-icon>
+            </div>
         </div>
     </div>
     

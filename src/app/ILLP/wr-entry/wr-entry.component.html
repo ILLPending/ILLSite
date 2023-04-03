@@ -15,7 +15,7 @@
             <a class="flex flex-row items-center w-fit xl:bg-slate-200 xl:dark:bg-slate-800 xl:rounded-lg 
             xl:font-bold xl:shadow-lg transition-all duration-300 hover:scale-105 m-1 p-1" *ngIf="bil_sumbitter" routerLink="/profile/{{bil_sumbitter.uid}}">
                 <fa-icon [icon]="i_link" class="mx-1"></fa-icon>
-                <img [src]="bil_sumbitter.profilePicture" class="w-[24px] aspect-square rounded-full m-1">
+                <img [src]="bil_sumbitter.avatar_url" class="w-[24px] aspect-square rounded-full m-1">
                 {{bil_sumbitter.username}}
             </a> 
         </div>
@@ -35,7 +35,7 @@
         <b *ngIf="bil_status == 'Rejected'" class="font-normal">Reason: {{bil_data.reject_reason}}</b>
     </div>
     <div class="p-3 m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col" *ngIf="auth_service.user$ | async as user">
-        <div class="flex flex-col w-full" *ngIf="user.roles.admin">
+        <div class="flex flex-col w-full" *ngIf="user['permissions'] == 'listAdmin'">
             <button (click)="approveWR()" class="m-2 p-2 bg-green-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" >Approve WR</button>
             <button (click)="rejectWR()" class="m-2 p-2 bg-red-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" >Reject WR</button>
             <input class="rounded-xl border-l-4 border-blue-500 p-2 m-2 text-black" [(ngModel)]="adm_rejectReason" type="text" placeholder="Insert reason for rejection"/>

@@ -1,3 +1,101 @@
 .ILL_dropdown {
     @apply hover:bg-slate-300 dark:hover:bg-slate-800 transition-all duration-300 p-2 text-base m-0
 }
+
+@keyframes slide_left {
+    from {
+        opacity: 0%;
+        transform: translateX(-75%);
+    }
+
+    to {
+        opacity: 100%;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes slide_right {
+    from {
+        opacity: 0%;
+        transform: translateX(75%);
+    }
+
+    to {
+        opacity: 100%;
+        transform: translateX(0%);
+    }
+}
+
+@keyframes slide_up {
+    from {
+        opacity: 0%;
+        transform: translateY(-75%);
+    }
+
+    to {
+        opacity: 100%;
+        transform: translateY(0%);
+    }
+}
+
+@keyframes slide_down {
+    from {
+        opacity: 0%;
+        transform: translateY(1%);
+    }
+
+    to {
+        opacity: 100%;
+        transform: translateY(0%);
+    }
+}
+
+.ILL_SlideInAnimL {
+    animation: slide_left 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimR {
+    animation: slide_right 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimU {
+    animation: slide_up 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimD {
+    animation: slide_down 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimL_Q {
+    animation: slide_left 0.33s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimR_Q {
+    animation: slide_right 0.33s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimU_Q {
+    animation: slide_up 0.33s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimD_Q {
+    animation: slide_down 0.33s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+@media(prefers-reduced-motion) {
+    .ILL_SlideInAnimL {
+        animation: none;
+    }
+
+    .ILL_SlideInAnimR {
+        animation: none;
+    }
+
+    .ILL_SlideInAnimU {
+        animation: none;
+    }
+
+    .ILL_SlideInAnimD {
+        animation: none;
+    }
+}

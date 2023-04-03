@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 .ILL_ListElem {
-    font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .ILL_ListElemScroll::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+  width: 10px;
+  height: 10px;
 }
 
 .ILL_ListElemScroll::-webkit-scrollbar-track {
-    border-radius: 100vh;
-    background: #475569;
+  border-radius: 100vh;
+  background: #475569;
 }
 
 .ILL_ListElemScroll::-webkit-scrollbar-thumb {
@@ -25,14 +25,12 @@
 }
 
 .ILL_Thumbnail {
-  object-fit:inherit;
+  object-fit: inherit;
   background-repeat: no-repeat;
 }
 
 .ILL_Tag {
-  @apply bg-[#4338ca] text-white rounded-xl relative 
-  w-fit h-fit xl:p-[4px] xl:text-sm text-xs p-[6px] font-light xl:scale-100 scale-90
-  shadow-md hover:shadow-xl m-1 hover:scale-105 transition-all duration-300 select-none
+  @apply bg-[#4338ca] text-white rounded-xl relative w-fit h-fit xl:p-[4px] xl:text-sm text-xs p-[6px] font-light xl:scale-100 scale-90 shadow-md hover:shadow-xl m-1 hover:scale-105 transition-all duration-300 select-none
 }
 
 .ILL_textFX {
@@ -41,13 +39,112 @@
 
 .ILL_whiteOutline {
   text-shadow: -1px 1px 0 #FFFFFF,
-				  1px 1px 0 #FFFFFF,
-				  1px -1px 0 #FFFFFF,
-				  -1px -1px 0 #FFFFFF;
+    1px 1px 0 #FFFFFF,
+    1px -1px 0 #FFFFFF,
+    -1px -1px 0 #FFFFFF;
 }
+
 .ILL_blackOutline {
   text-shadow: -1.5px 1.5px 0 #071013,
-				  1.5px 1px 0 #071013,
-				  1.5px -1.5px 0 #071013,
-				  -1.5px -1.5px 0 #071013;
+    1.5px 1px 0 #071013,
+    1.5px -1.5px 0 #071013,
+    -1.5px -1.5px 0 #071013;
+}
+
+@keyframes slide_left {
+  from {
+    opacity: 0%;
+    transform: translateX(-75%);
+  }
+
+  to {
+    opacity: 100%;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slide_right {
+  from {
+    opacity: 0%;
+    transform: translateX(75%);
+  }
+
+  to {
+    opacity: 100%;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slide_up {
+  from {
+    opacity: 0%;
+    transform: translateY(-75%);
+  }
+
+  to {
+    opacity: 100%;
+    transform: translateY(0%);
+  }
+}
+
+@keyframes slide_down {
+  from {
+    opacity: 0%;
+    transform: translateY(75%);
+  }
+
+  to {
+    opacity: 100%;
+    transform: translateY(0%);
+  }
+}
+
+@keyframes pan_bg {
+  from {
+    background-position: left top;
+  } to {
+    background-position: right top;
+  }
+}
+
+.ILL_SlideInAnimL {
+  animation: slide_left 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimR {
+  animation: slide_right 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimU {
+  animation: slide_up 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_SlideInAnimD {
+  animation: slide_down 1s cubic-bezier(0, 0, 0.21, 0.99);
+}
+
+.ILL_BgPanning {
+    animation: pan_bg 10s linear
+}
+
+@media(prefers-reduced-motion) {
+  .ILL_SlideInAnimL {
+    animation: none;
+  }
+
+  .ILL_SlideInAnimR {
+    animation: none;
+  }
+
+  .ILL_SlideInAnimU {
+    animation: none;
+  }
+
+  .ILL_SlideInAnimD {
+    animation: none;
+  }
+
+  .ILL_BgPanning {
+    animation: none
+  }
 }

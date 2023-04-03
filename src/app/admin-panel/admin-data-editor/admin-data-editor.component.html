@@ -1,168 +1,136 @@
-<div class="flex flex-row">
-    <!-- Position map unpinned -->
-    <div class=" dark:text-white fixed left-0 lg:bottom-0 bottom-16 bg-slate-300 dark:bg-slate-800 lg:h-screen h-fit lg:p-5 p-2 shadow-lg lg:text-base text-xs" *ngIf="!lists_pinned">
-        <div class="flex lg:flex-row flex-col-reverse items-baseline lg:w-full w-screen">
-            <ul class="overflow-y-scroll ILL_AdminScroll lg:w-full lg:h-screen w-screen h-[66vh]" *ngIf="bil_showList">
-                <li class="flex flex-row items-center transition-all duration-200 w-full" *ngFor="let level of levelList">
-                    <div class="flex flex-col items-center justify-center text-sm">
-                        <b class="p-2 text-xl text-center w-12 bg-slate-300 dark:bg-slate-700 h-full rounded-lg shadow-md select-none">#{{level.position}}</b>
-                    </div>
-                    <div class="bg-slate-300 dark:bg-slate-700 m-1 p-1 lg:text-lg text-sm rounded-lg shadow-md select-none flex flex-col w-full hover:bg-slate-900" (click)="loadDataFromLevel(level)">
-                        <div class="flex flex-row items-center">
-                            <fa-icon [icon]="i_edit" class="m-1"></fa-icon>
-                            <b class="">{{level.name}}</b>
-                        </div>
-                        <b class="text-sm font-light">{{level.creators_short}}</b>
-                    </div>
-                </li>
-            </ul>
-            <div *ngIf="bil_showWRList" class="overflow-y-scroll ILL_AdminScroll lg:w-full lg:h-screen w-screen h-[66vh]">
-                <div class="flex flex-row m-1 rounded-xl bg-slate-200 dark:bg-slate-700 items-center dark:text-white"
-                *ngFor="let wr of wr_pendingList">
-                    <a class="mx-1 font-semibold" [routerLink]="'/wr/'+wr.$key"><fa-icon class="mx-2" [icon]="i_link"></fa-icon>{{wr.level}}</a>
-                    <b class="mx-1 font-normal mr-auto text-sm">{{wr.progress}}</b>
-                    <button class="m-2 p-2 bg-green-600 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="approveSubmission(wr.$key)"><fa-icon [icon]="i_check"></fa-icon> </button>
-                    <button class="m-2 p-2 bg-red-600 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="rejectSubmission(wr.$key)"><fa-icon [icon]="i_cross"></fa-icon> </button>
-    
-                </div>
-            </div>
-            <div class="flex lg:flex-col flex-row lg:justify-start justify-around h-full lg:w-fit w-full lg:mt-16">
-                <button class="p-3 text-white bg-slate-900 rounded-full lg:relative absolute lg:opacity-100 opacity-0" (click)="togglePin()">
-                    <fa-icon [icon]="i_pin" class="text-2xl m-1"></fa-icon>
+<div class="flex lg:flex-row flex-col lg:w-full w-screen items-start justify-start">
+    <app-admin-data-list (selectLevelEvent)="loadDataFromLevel($event)"></app-admin-data-list>
+    <div class="flex flex-col lg:w-fit w-screen h-full">
+        <!-- Level form -->
+        <div class="bg-slate-300 dark:bg-slate-700 m-2 p-3 rounded-2xl dark:text-white flex flex-col w-[100%]">
+            <b class="text-lg font-normal">Level submission form</b>
+            <div class="mx-auto my-3">
+                <button class="flex flex-row w-96 items-center justify-between rounded-full overflow-hidden text-xl 
+                font-semibold hover:scale-105 transition-all duration-200" (click)="toggleMode()">
+                    <div class="p-4 bg-blue-500 w-[50%]" *ngIf="bil_mode == 0">Create</div>
+                    <div class="p-4 bg-neutral-500 w-[50%]" *ngIf="bil_mode == 1">Create</div>
+                    <div class="p-4 bg-neutral-500 w-[50%]" *ngIf="bil_mode == 0">Edit</div>
+                    <div class="p-4 bg-orange-500 w-[50%]" *ngIf="bil_mode == 1">Edit</div>
                 </button>
-                <div class="flex lg:flex-col flex-row m-1">
-                    <button class="p-3 bg-slate-200 dark:bg-slate-900 rounded-full" (click)="toggleILLList()">
-                        <fa-icon [icon]="i_list" class="text-2xl m-1" *ngIf="!bil_showList"></fa-icon>
-                        <fa-icon [icon]="i_cross" class="text-2xl m-1" *ngIf="bil_showList"></fa-icon>
-                    </button>
-                </div>
-                <div class="flex lg:flex-col flex-row m-1">
-                    <button class="p-3 bg-slate-200 dark:bg-slate-900 rounded-full" (click)="toggleWRList()">
-                        <fa-icon [icon]="i_wr" class="text-2xl m-1" *ngIf="!bil_showWRList"></fa-icon>
-                        <fa-icon [icon]="i_cross" class="text-2xl m-1" *ngIf="bil_showWRList"></fa-icon>
-                    </button>
-                </div>
             </div>
-        </div>
+            <div class="bg-slate-200 dark:bg-slate-600 rounded-xl p-2">
     
-    </div>
-    <!-- Position map pinned -->
-    <div class=" dark:text-white bg-slate-300 dark:bg-slate-800 lg:h-screen h-fit lg:p-5 p-2 shadow-lg lg:text-base text-xs" *ngIf="lists_pinned">
-        <div class="flex lg:flex-row flex-col-reverse items-baseline lg:w-full w-screen">
-            <ul class="overflow-y-scroll ILL_AdminScroll lg:w-full lg:h-screen w-screen h-[66vh] mt-0" *ngIf="bil_showList">
-                <li class="flex flex-row items-center transition-all duration-200 w-full" *ngFor="let level of levelList">
-                    <div class="flex flex-col items-center justify-center text-sm">
-                        <b class="p-2 text-xl text-center w-12 bg-slate-300 dark:bg-slate-700 h-full rounded-lg shadow-md select-none">#{{level.position}}</b>
+    
+                <b>Level information:</b>
+                <div class="flex flex-row items-start my-1 justify-between">
+                    <div class="flex flex-col w-[50%]">
+                        <b class="mx-1 font-normal">Position:</b>
+                        <input [(ngModel)]="bil_index" class="ILL_TextField" type="number" placeholder="Level position"/>
+                        <b class="mx-1 font-normal">Name:</b>
+                        <input [(ngModel)]="bil_name" class="ILL_TextField" type="text" placeholder="Level name"/>
+                        <b class="mx-1 font-normal">Creators (short):</b>
+                        <input [(ngModel)]="bil_c_s" class="ILL_TextField" type="text" placeholder="Level creators"/>
+                        <b class="mx-1 font-normal">GD version:</b>
+                        <input [(ngModel)]="bil_gdv" class="ILL_TextField" type="text" placeholder="GD version"/>
                     </div>
-                    <div class="bg-slate-300 dark:bg-slate-700 m-1 p-1 lg:text-lg text-sm rounded-lg shadow-md select-none flex flex-col w-full hover:bg-slate-900" (click)="loadDataFromLevel(level)">
-                        <div class="flex flex-row items-center">
-                            <fa-icon [icon]="i_edit" class="m-1"></fa-icon>
-                            <b class="">{{level.name}}</b>
-                        </div>
-                        <b class="text-sm font-light">{{level.creators_short}}</b>
+                    <div class="flex flex-col w-[50%]">
+                        <b class="mx-1 font-normal">FPS:</b>
+                        <input [(ngModel)]="bil_fps" class="ILL_TextField" type="number" placeholder="Level FPS"/>
+                        <b class="mx-1 font-normal">Level ID:</b>
+                        <input [(ngModel)]="bil_id" class="ILL_TextField" type="text" placeholder="Level ID (N/A for none)"/>
+                        <b class="mx-1 font-normal">Uploader:</b>
+                        <input [(ngModel)]="bil_upld" class="ILL_TextField" type="text" placeholder="Uploader (GD username)"/>
                     </div>
-                </li>
-            </ul>
-            <div *ngIf="bil_showWRList" class="overflow-y-scroll ILL_AdminScroll lg:w-full lg:h-screen w-screen h-[66vh]">
-                <div class="flex flex-row m-1 rounded-xl bg-slate-200 dark:bg-slate-700 items-center dark:text-white"
-                *ngFor="let wr of wr_pendingList">
-                    <a class="mx-1 font-semibold" [routerLink]="'/wr/'+wr.$key"><fa-icon class="mx-2" [icon]="i_link"></fa-icon>{{wr.level}}</a>
-                    <b class="mx-1 font-normal mr-auto text-sm">{{wr.progress}}</b>
-                    <button class="m-2 p-2 bg-green-600 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="approveSubmission(wr.$key)"><fa-icon [icon]="i_check"></fa-icon> </button>
-                    <button class="m-2 p-2 bg-red-600 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="rejectSubmission(wr.$key)"><fa-icon [icon]="i_cross"></fa-icon> </button>
+                </div>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">Creators:</b>
+                    <input [(ngModel)]="bil_c_f" class="ILL_TextField w-full" type="text" placeholder="All creators separated by a comma (,)"/>
+                </div>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">Tags:</b>
+                    <input [(ngModel)]="bil_tags" class="ILL_TextField w-full" type="text" placeholder="Level tags separated by a comma (,)"/>
+                </div>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">Showcase video link:</b>
+                    <input [(ngModel)]="bil_ytid" class="ILL_TextField w-full" type="text" placeholder="Youtube URL/Video id of the level showcase"/>
+                </div>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">Wideshot image link:</b>
+                    <input [(ngModel)]="bil_wideshotURL" class="ILL_TextField w-[60%]" type="text" placeholder="Link to the level wideshot"/>
+                    <div class="flex flex-row w-[40%] items-center">
+                        <b class="mx-1 text-xs font-normal">Use dark text:</b>
+                        <input [(ngModel)]="bil_darktext" class="rounded-full w-8 h-8" type="checkbox"/>
+                    </div>
+                </div>
     
-                </div>
-            </div>
-            <div class="flex lg:flex-col flex-row lg:justify-start justify-around h-full lg:w-fit w-full">
-                <div class="flex lg:flex-col flex-row m-1">
-                    <button class="p-3 text-black bg-slate-300 rounded-full lg:relative absolute lg:opacity-100 opacity-0" (click)="togglePin()">
-                        <fa-icon [icon]="i_pin" class="text-2xl m-1"></fa-icon>
-                    </button>
-                    <button class="p-3 bg-slate-200 dark:bg-slate-900 rounded-full" (click)="toggleILLList()">
-                        <fa-icon [icon]="i_list" class="text-2xl m-1" *ngIf="!bil_showList"></fa-icon>
-                        <fa-icon [icon]="i_cross" class="text-2xl m-1" *ngIf="bil_showList"></fa-icon>
-                    </button>
-                </div>
-                <div class="flex lg:flex-col flex-row m-1">
-                    <button class="p-3 bg-slate-200 dark:bg-slate-900 rounded-full" (click)="toggleWRList()">
-                        <fa-icon [icon]="i_wr" class="text-2xl m-1" *ngIf="!bil_showWRList"></fa-icon>
-                        <fa-icon [icon]="i_cross" class="text-2xl m-1" *ngIf="bil_showWRList"></fa-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
     
-    </div>
-
-    <!-- Level editor -->
-    <div class="bg-slate-300 dark:bg-slate-600 lg:m-5 m-0 lg:ml-28 lg:p-10 p-3 h-full mb-48 flex flex-col lg:w-fit w-screen rounded-xl">
-        <div>
-            <div class="bg-slate-200 flex flex-col lg:p-5 p-[2px] shadow-lg rounded-lg">
-                <p class="font-semibold">Basic information</p>
-                <div class="flex flex-row flex-wrap items-baseline w-full">
-                    <input [(ngModel)]="bil_name" id="ILLA_Name" class="m-1 p-2 border-l-4 border-blue-400 shadow-md rounded-lg bg-green-300" type="text" placeholder="Level Name" />
-                    <input [(ngModel)]="bil_id" id="ILLA_ID" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="Level ID" />
-                    <input [(ngModel)]="bil_fps" id="ILLA_FPS" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="Required FPS" />
+                <b>World records:</b>
+                <div class="flex flex-row items-center">
+                    <input [(ngModel)]="bil_manualWR" class="rounded-full w-8 h-8" type="checkbox"/>
+                    <b class="mx-1 font-normal">Use manual WR system</b>
                 </div>
-                <div class="flex flex-row flex-wrap items-center justify-start w-full">
-                    <input [(ngModel)]="bil_c_s" id="ILLA_CreatorsShort" class="m-1 p-2 border-l-4 border-blue-400 shadow-md rounded-lg bg-green-300" type="text" placeholder="Creator/s short" />
-                    <input [(ngModel)]="bil_upld" id="ILLA_Uploader" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="Uploader Name" />
-                    <input [(ngModel)]="bil_gdv" id="ILLA_Position" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="GD version" />
-                    <input [(ngModel)]="bil_index" id="ILLA_Position" class="m-1 p-2 border-l-4 border-blue-400 shadow-md rounded-lg bg-green-300" type="number" placeholder="Level position" />
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">WR minimum:</b>
+                    <input [disabled]="!bil_manualWR" [(ngModel)]="bil_wr_min" class="ILL_TextField w-full" type="text" placeholder="Minimum percentage for WR without % and > "/>
                 </div>
-                <input [(ngModel)]="bil_ytid" id="ILLA_YTID" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="YouTube Video ID" />
-                <input [(ngModel)]="bil_c_f" id="ILLA_CreatorsFull" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="Creator/s full" />
-                <input [(ngModel)]="bil_tags" id="ILLA_Tags" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="Tags" />
-                <input [(ngModel)]="bil_wideshotURL" id="ILLA_Wideshot" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="URL to a wide level shot (optional) (discord also works)" />
-                <div class="flex flex-row items-center justify-start w-full">
-                    <input [(ngModel)]="bil_darktext" id="ILLA_DarkText" class="m-1 p-2 w-6 h-6 shadow-md" type="checkbox"/>
-                    <p class="p-1 m-1 text-white  bg-red-400 rounded-lg shadow-md">Use dark text for wideshot</p>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">World record:</b>
+                    <input [disabled]="!bil_manualWR" [(ngModel)]="bil_wr" class="ILL_TextField w-full" type="text" placeholder="Current world record"/>
                 </div>
-                <hr/>
-                <p class="font-semibold">WR information</p>
-                <div class="flex flex-row items-center justify-start">
-                    <input [(ngModel)]="bil_manualWR" id="ILLA_Deletion" class="m-1 p-2 w-6 h-6 shadow-md" type="checkbox"/>
-                    <p class="p-1 m-1 text-white  bg-red-400 rounded-lg shadow-md">Should have a manual WR (disconnects from the online WR system)</p>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">World record video:</b>
+                    <input [disabled]="!bil_manualWR" [(ngModel)]="bil_wr_yt" class="ILL_TextField w-full" type="text" placeholder="URL of the WR video (yt or discord)"/>
                 </div>
-                <input [disabled]="!bil_manualWR" [(ngModel)]="bil_wr_min" id="ILLA_WR_Min" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="WR Minimum percentage (WITHOUT % and >)" />
-                <input [disabled]="!bil_manualWR" [(ngModel)]="bil_wr" id="ILLA_WR" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="Current World Record" />
-                <input [disabled]="!bil_manualWR" [(ngModel)]="bil_wr_yt" id="ILLA_WRYT" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="url" placeholder="Current World Record Video" />
-                <hr/>
-                <p class="font-semibold">Annotation & Marking</p>
-                <div class="flex flex-row items-center justify-start">
-                    <input [(ngModel)]="bil_removal" id="ILLA_Deletion" class="m-1 p-2 w-6 h-6 shadow-md" type="checkbox"/>
-                    <p class="p-1 m-1 text-white  bg-red-400 rounded-lg shadow-md">Mark Level for Removal</p>
+    
+    
+                <b>Annotation & Marking:</b>
+                <div class="flex flex-row items-center">
+                    <div class="flex flex-row w-[50%] items-center bg-red-500 p-4 rounded-xl mx-1">
+                        <input [(ngModel)]="bil_removal" class="rounded-full w-8 h-8" type="checkbox"/>
+                        <b class="mx-1 text-sm font-semibold">Marked for removal:</b>
+                    </div>
+                    <div class="flex flex-row w-[50%] items-center bg-gray-500 p-4 rounded-xl mx-1">
+                        <input [(ngModel)]="bil_annotation" class="rounded-full w-8 h-8" type="checkbox"/>
+                        <b class="mx-1 text-sm font-semibold">Annotated for significance:</b>
+                    </div>
                 </div>
-                <div class="flex flex-row items-center justify-start">
-                    <input [(ngModel)]="bil_annotation" id="ILLA_Annotation" class="m-1 p-2 w-6 h-6 shadow-md" type="checkbox"/>
-                    <p class="p-1 m-1 text-white  bg-gray-500 rounded-lg shadow-md">Annotate Level</p>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">Marking reason:</b>
+                    <input [(ngModel)]="bil_reason" class="ILL_TextField w-full" type="text" placeholder="Reason for marking for removal"/>
                 </div>
-                <input [(ngModel)]="bil_reason" id="ILLA_WRYT" class="m-1 p-2 border-l-2 border-blue-400 shadow-md rounded-lg" type="text" placeholder="Reason for Removal" />
-                <p class="italic text-center text-green-800">{{lb_editStatus}}</p>
             </div>
-            <button class="m-2 p-2 bg-blue-600 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 disabled:bg-neutral-500" 
-            [disabled]="!bil_name || !bil_c_s" (click)="submitLevel()">Save</button>
-            <button class="m-2 p-2 bg-blue-600 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 disabled:bg-neutral-500" 
-            (click)="reSortLevels()">Sort</button>
-            <button class="m-2 p-2 bg-gray-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="clearForm()">Clear</button>
-            <button class="m-2 p-2 bg-gray-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="log()">Log</button>
-            <button class="m-2 p-2 bg-green-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="remapLevels()">Remap level positions</button>
-            <button class="m-2 p-2 bg-red-600 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="removeLevel()">Remove Level</button>
         </div>
-        <!-- Logger -->
-        <div class="bg-slate-400 m-2 p-3 rounded-lg shadow-lg flex flex-col items-stretch text-white">
-            <p>Admin Log</p>
-            <div class="bg-slate-700 m-1 p-2 rounded-lg shadow-lg text-white font-light" *ngFor="let log of auditLog">
-                <p class="border-l-2 border-slate-400 pl-1">> {{log}}</p>
+
+        <b class="text-lg font-semibold text-red-600 text-center">{{lb_editStatus}}</b>
+
+        <!-- Toolbar -->
+        <div class="mx-5 rounded-full dark:bg-slate-700 overflow-hidden flex flex-row items-center justify-around p-0">
+            <div (click)="submitLevel()" class="flex flex-row items-center justify-center select-none dark:text-white dark:bg-green-700 dark:hover:bg-green-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_save" class="m-2  text-2xl"></fa-icon>
+                <b>Save</b>
             </div>
+            <div (click)="clearForm()" class="flex flex-row items-center justify-center select-none dark:text-white dark:bg-neutral-700 dark:hover:bg-neutral-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_clear" class="m-2  text-2xl"></fa-icon>
+                <b>Clear</b>
+            </div>
+            <div (click)="remapLevels()" class="flex flex-row items-center justify-center select-none dark:text-white dark:bg-orange-700 dark:hover:bg-orange-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_remap" class="m-2  text-2xl"></fa-icon>
+                <b>Remap</b>
+            </div>
+            <div (click)="removeLevel()" class="flex flex-row items-center justify-center select-none dark:text-white dark:bg-red-700 dark:hover:bg-red-600 p-2 w-full transition-all duration-200">
+                <fa-icon [icon]="i_delete" class="m-2  text-2xl"></fa-icon>
+                <b>Delete</b>
+            </div>
+        </div>
 
-        </div>
-        <div class="flex flex-row w-full items-center">
-            <button class="m-2 p-2 bg-pink-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="readd_database_entries()" >Fix up database queries</button>
-            <button class="m-2 p-2 bg-orange-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="resetProfileData()" >Recount levels for creators</button>
-            <button class="m-2 p-2 bg-lime-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" (click)="deleteRejectedWRs()" >Delete rejected wr submissions</button>
-        </div>
+        
     </div>
+    <div class="flex flex-col justify-between lg:w-[35%] w-screen h-full lg:m-5 m-2">
+        <!-- Admin log -->
+        <div class="bg-slate-300 dark:bg-slate-700 p-3 h-96 dark:text-white rounded-2xl">
+            <b>Admin log</b>
+            <div class="flex flex-col overflow-auto">
+                <div class="border-l-4 rounded-xl border-slate-400 bg-slate-800 p-2 m-1" *ngFor="let log of auditLog">
+                    <b class="font-normal"> > {{log}}</b>
+                </div>
+            </div>
+        </div>
 
-    <!-- Record submissions -->
+        
+    </div>
 </div>
