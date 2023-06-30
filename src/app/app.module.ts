@@ -33,8 +33,6 @@ import { ProfilePageComponent } from './profiles-and-login/profile-page/profile-
 import { BundleComponent } from './ILLP/bundle/bundle.component';
 import { WrWidgetComponent } from './ILLP/wr-widget/wr-widget.component';
 import { WrEntryComponent } from './ILLP/wr-entry/wr-entry.component';
-import { BundlePageComponent } from './ILLP/bundle-page/bundle-page.component';
-import { IllpHomePageComponent } from './ILLP/illp-home-page/illp-home-page.component';
 import { WrSubmissionPageComponent } from './ILLP/wr-submission-page/wr-submission-page.component'
 
 import Pocketbase from 'pocketbase'
@@ -48,6 +46,10 @@ import { AdminWrPanelComponent } from './admin-panel/admin-wr-panel/admin-wr-pan
 import { AdminIllpPanelComponent } from './admin-panel/admin-illp-panel/admin-illp-panel.component';
 import { AdminProfilesPanelComponent } from './admin-panel/admin-profiles-panel/admin-profiles-panel.component';
 import { AdminMiscPanelComponent } from './admin-panel/admin-misc-panel/admin-misc-panel.component';
+import { ExpHomePageComponent } from './Experiments/exp-home-page/exp-home-page.component';
+import { ExpIllGptComponent } from './Experiments/exp-ill-gpt/exp-ill-gpt.component';
+import { ExpLevelIdeaGeneratorComponent } from './Experiments/exp-level-idea-generator/exp-level-idea-generator.component';
+import { RulesComponent } from './misc/rules/rules.component';
 
 @NgModule({
   declarations: [
@@ -62,17 +64,18 @@ import { AdminMiscPanelComponent } from './admin-panel/admin-misc-panel/admin-mi
     RoleElemComponent,
     AccountSettingsComponent,
     ProfilePageComponent,
-    BundleComponent,
     WrWidgetComponent,
     WrEntryComponent,
-    BundlePageComponent,
-    IllpHomePageComponent,
     WrSubmissionPageComponent,
     AdminDataListComponent,
     AdminWrPanelComponent,
     AdminIllpPanelComponent,
     AdminProfilesPanelComponent,
     AdminMiscPanelComponent,
+    ExpHomePageComponent,
+    ExpIllGptComponent,
+    ExpLevelIdeaGeneratorComponent,
+    RulesComponent,
   ],
   imports: [
     BrowserModule,

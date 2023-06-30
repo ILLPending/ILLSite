@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { AuthService } from './shared/auth.service';
 import { UserData } from './shared/user-data';
 import { Router, RouterOutlet } from '@angular/router';
-import { faCog, faCookieBite, faCube, faFileLines, faHistory, faHome, faMoon, faPerson, faQuestionCircle, faRankingStar, faRefresh, faRightFromBracket, faRightToBracket, faRotateRight, faSun, faToolbox, faTrophy, faUser, faWrench, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCog, faCookieBite, faCube, faFileLines, faFlask, faHistory, faHome, faMoon, faPerson, faQuestionCircle, faRankingStar, faRefresh, faRightFromBracket, faRightToBracket, faRotateRight, faScroll, faSun, faToolbox, faTrophy, faUser, faWrench, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { faDiscord, faPatreon } from '@fortawesome/free-brands-svg-icons';
 import { LevelServiceService } from './shared/level-service.service';
 
@@ -43,6 +43,8 @@ export class AppComponent implements OnInit {
   i_wr = faTrophy;
   i_home = faHome;
   i_cross = faXmark;
+  i_exp = faFlask;
+  i_rules = faScroll;
 
   i_profile = faUser;
   i_gdusername = faCube;

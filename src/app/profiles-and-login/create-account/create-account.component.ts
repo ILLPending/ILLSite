@@ -13,18 +13,19 @@ export class CreateAccountComponent implements OnInit {
   userName: string = '';
   userEmail: string = '';
   userPassword: string = '';
+  _username_correct: boolean = true;
 
   randomExampleUsername: string = '';
   _keywords1: string[] = [
     'sloom', 'lennard', 'wistfully',
     'barry', 'ReLife', 'ging',
-    'schafs', 'minus wave', 'sheep',
+    'schafs', 'minuswave', 'sheep',
     'domba'
   ];
   _keywords2: string[] = [
-    'liker', 'disliker', 'hater',
-    'CEO', 'creator',
-    'worshipper', 'simp', ''
+    'Liker', 'Disliker', 'Hater',
+    'CEO', 'Creator',
+    'Worshipper', 'Simp', '', 'Ignorer'
   ]
 
   lb_err: string = '';
@@ -47,6 +48,14 @@ export class CreateAccountComponent implements OnInit {
     })
     if(this.lb_err == '') {
       this.router.navigate(['../home']);
+    }
+  }
+
+  checkUsername() {
+    if(this.userName.includes(" ")) {
+      this._username_correct = false;
+    } else {
+      this._username_correct = true;
     }
   }
 }

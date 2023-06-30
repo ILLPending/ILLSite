@@ -1,0 +1,15 @@
+.ILL_Spin_1 {
+    animation: spin 60s linear infinite;
+}
+.ILL_Spin_2 {
+    animation: spin 60s linear infinite reverse;
+}
+
+@keyframes spin {
+    from {
+        rotate: 0deg;
+    }
+    to {
+        rotate: 360deg
+    }
+}

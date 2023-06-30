@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faScroll } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-faq',
@@ -9,6 +9,7 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 export class FaqComponent implements OnInit {
 
   i_question = faQuestionCircle;
+  i_rules = faScroll
   constructor() { }
 
   ngOnInit(): void {

@@ -19,7 +19,7 @@
 <!-- NavBar PC -->
 <div class="ILL_Navbar bg-gray-300 dark:bg-gray-800 text-[#071013] dark:text-white select-none transition-all duration-500">
   <div class="flex flex-row items-center overflow-hidden">
-    <a routerLink="/home" class="">
+    <a href="" class="">
         <img class="p-2" src="../assets/logo.png" width="64" height="64" />
     </a>
     <b class="text-2xl select-none font-normal lg:static absolute lg:scale-100 scale-0">Impossible Levels List</b>
@@ -44,17 +44,22 @@
         <b class="lg:scale-100 lg:relative">FAQ</b>
       </span>   
     </a>
+    <a routerLink="/rules">
+      <span class="ILL_NavbarBtn dark:text-slate-50 text-slate-900 ">
+        <fa-icon [icon]="i_rules" class="m-1 text-lg"></fa-icon>
+        <b class="lg:scale-100 lg:relative">ILL Rules</b>
+      </span>   
+    </a>
     <a routerLink="/wr-submission" *ngIf="authService.user$ | async as user">
       <span class="ILL_NavbarBtn dark:text-slate-50 text-slate-900 ">
         <fa-icon [icon]="i_wr" class="m-1 text-lg"></fa-icon>
         <b class="lg:scale-100 lg:relative">Submit a WR</b>
       </span>   
     </a>
-    <a class="cursor-not-allowed">
-      <span class="font-normal w-full h-full lg:p-2 p-1 transition-all duration-300 select-none hover:scale-105 dark:hover:text-red-500 hover:text-red-500 dark:text-white text-slate-900
-      lg:text-sm text-xs flex lg:flex-row lg:items-center flex-col text-center lg:text-left items-center mx-0">
-        <fa-icon [icon]="i_stats" class="m-1 text-lg"></fa-icon>
-        <b class="lg:scale-100 lg:relative">ILLP</b>
+    <a routerLink="/experiments">
+      <span class="ILL_NavbarBtn dark:text-slate-50 text-slate-900 ">
+        <fa-icon [icon]="i_exp" class="m-1 text-lg"></fa-icon>
+        <b class="lg:scale-100 lg:relative">Experiments</b>
       </span>   
     </a>
     <a routerLink="/admin" *ngIf="authService.user$ | async as user" [hidden]="user['permissions'] != 'listAdmin'">
@@ -90,13 +95,13 @@
   </div>
 
   <!-- Data loss message -->
-  <!-- <div class="w-screen fixed mt-24 z-50 flex flex-row items-center justify-between bg-amber-400 text-white p-2" *ngIf="!hideSC2Message">
-    <b>Due to the incident on April 1st all of the account data on the ILL website was removed by Eric Meyer. If you had an account on the ILL you should re-make it. We apologize for the inconvenience :(</b>
+  <div class="w-screen fixed mt-24 z-50 flex flex-row items-center justify-between bg-orange-400 text-white p-2" *ngIf="!hideSC2Message">
+    <b>Due to the incident on April 1st all of the account data on the ILL website was wiped away. If you had an account on the ILL you should re-make it. We apologize for the inconvenience :(</b>
     <button class="mx-5" (click)="turnOffSC2Message()"><fa-icon [icon]="i_cross" ></fa-icon></button>
-  </div> -->
-  <div class="w-screen fixed mt-24 z-50 flex flex-row items-center justify-between bg-red-600 text-white p-2">
-    <b>We are experiencing backend issues and the list as well as all major systems are out of order. Please stay patient. Use the doc in the mean time :P</b>
   </div>
+  <!-- <div class="w-screen fixed mt-24 z-50 flex flex-row items-center justify-between bg-red-600 text-white p-2">
+    <b>We are experiencing backend issues and the list as well as all major systems are out of order. Please stay patient. Use the doc in the mean time :P</b>
+  </div> -->
 
 
   <!-- profile data thing -->
@@ -171,37 +176,37 @@
 </div>
 <!-- Hot Button Menu -->
 <div *ngIf="_showHotButtonData" class="fixed z-50 bottom-20 flex flex-row flex-shrink items-end justify-between p-0 m-0 left-[50%] -translate-x-[50%]">
-  <a (click)="toggleHotButton()" href="" class="p-2 flex flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimLQ">
-    <fa-icon [icon]="i_discord" class="m-[2px] text-xl"></fa-icon>
-    <b class="lg:scale-100 lg:relative text-xs font-normal">Discord</b>
+  <a (click)="toggleHotButton()" routerLink="/rules" class="p-2 flex aspect-square flex-col self-end items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimLQ">
+    <fa-icon [icon]="i_rules" class="m-[2px] text-[20px]"></fa-icon>
+    <b class="lg:scale-100 lg:relative text-xs font-normal text-center">Rules</b>
   </a>
-  <a (click)="toggleHotButton()" routerLink="/faq" class="p-2 flex flex-col self-center items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimLQ">
-    <fa-icon [icon]="i_faq" class="m-[2px] text-xl"></fa-icon>
-    <b class="lg:scale-100 lg:relative text-xs font-normal">FAQ</b>
+  <a (click)="toggleHotButton()" routerLink="/faq" class="p-2 flex aspect-square flex-col self-center items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimLQ">
+    <fa-icon [icon]="i_faq" class="m-[2px] text-[20px]"></fa-icon>
+    <b class="lg:scale-100 lg:relative text-xs font-normal text-center">FAQ</b>
   </a>
-  <a (click)="toggleHotButton()" routerLink="/home" class="p-2 flex flex-col self-start items-center justify-center bg-blue-500 m-3 rounded-full text-white w-24 shadow-xl overflow-hidden ILL_SlideInAnimUQ">
+  <a (click)="toggleHotButton()" routerLink="/home" class="p-2 flex aspect-square flex-col self-start items-center justify-center bg-blue-500 m-3 rounded-full text-white w-24 shadow-xl overflow-hidden ILL_SlideInAnimUQ">
     <fa-icon [icon]="i_home" class="m-[16px] text-xl"></fa-icon>
     <b class="lg:scale-100 lg:relative text-xs font-normal">Home</b>
   </a>
-  <a (click)="toggleHotButton()" routerLink="/account-settings" class="p-2 flex self-center flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
-    <fa-icon [icon]="i_settings" class="m-[2px] text-xl"></fa-icon>
+  <a (click)="toggleHotButton()" routerLink="/account-settings" class="p-2 flex aspect-square self-center flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
+    <fa-icon [icon]="i_settings" class="m-[2px] text-[20px]"></fa-icon>
     <b class="lg:scale-100 lg:relative text-xs font-normal">Settings</b>
   </a>
   <div *ngIf="authService.user$ | async as user">
-    <a (click)="toggleHotButton()" *ngIf="user['permissions'] == 'listAdmin'" routerLink="/admin" class="p-2 flex flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
-      <fa-icon [icon]="i_admin" class="m-[2px] text-xl"></fa-icon>
+    <a (click)="toggleHotButton()" *ngIf="user['permissions'] == 'listAdmin'" routerLink="/admin" class="p-2 flex aspect-square flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
+      <fa-icon [icon]="i_admin" class="m-[2px] text-[20px]"></fa-icon>
       <b class="lg:scale-100 lg:relative text-xs font-normal">Admin</b>
     </a>
   </div>
   <div *ngIf="authService.user$ | async as user">
-    <a (click)="toggleHotButton()" *ngIf="user['permissions'] == 'member'" routerLink="/profile/{{user['id']}}" class="p-2 flex flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
-      <fa-icon [icon]="i_profile" class="m-[2px] text-xl"></fa-icon>
+    <a (click)="toggleHotButton()" *ngIf="user['permissions'] == 'member'" routerLink="/profile/{{user['id']}}" class="p-2 flex aspect-square flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
+      <fa-icon [icon]="i_profile" class="m-[2px] text-[20px]"></fa-icon>
       <b class="lg:scale-100 lg:relative text-xs font-normal">Profile</b>
     </a>
   </div>
   <div *ngIf="(authService.user$ | async) === null">
-    <a (click)="toggleHotButton()" routerLink="/login" class="p-2 flex flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
-      <fa-icon [icon]="i_login" class="m-[2px] text-xl"></fa-icon>
+    <a (click)="toggleHotButton()" routerLink="/login" class="p-2 flex aspect-square flex-col items-center justify-center bg-blue-700 m-1 rounded-full text-white w-16 shadow-xl ILL_SlideInAnimRQ">
+      <fa-icon [icon]="i_login" class="m-[2px] text-[20px]"></fa-icon>
       <b class="lg:scale-100 lg:relative text-xs font-normal">Sign in</b>
     </a>
   </div>
@@ -220,10 +225,10 @@ select-none lg:hidden lg:absolute lg:scale-0 sm:ILL_SlideInAnimD">
   <div class="p-2 scale-[100%] -translate-y-2 bg-blue-500 rounded-full shadow-xl active:scale-[125%] transition-all duration-500 overflow-hidden" (click)="toggleHotButton()">
     <img class="scale-[130%]" src="../assets/logo.png" width="64" height="64" />
   </div>
-  <a class="cursor-not-allowed w-48">
+  <a routerLink="/experiments" class=" w-48">
     <span class="flex flex-col items-center justify-center">
-      <fa-icon [icon]="i_stats" class="m-1 text-2xl"></fa-icon>
-      <b class="lg:scale-100 lg:relative text-sm font-normal">ILLP</b>
+      <fa-icon [icon]="i_exp" class="m-1 text-2xl"></fa-icon>
+      <b class="lg:scale-100 lg:relative text-sm font-normal">Experiments</b>
     </span>   
   </a>
 </div>

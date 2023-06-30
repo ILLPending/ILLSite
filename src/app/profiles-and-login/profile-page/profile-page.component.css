@@ -4,3 +4,23 @@
 				  1.5px -1.5px 0 #071013,
 				  -1.5px -1.5px 0 #071013;
 }
+
+.ILL_ListElemScroll::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+  }
+  
+  .ILL_ListElemScroll::-webkit-scrollbar-track {
+	border-radius: 100vh;
+	background: #475569;
+  }
+  
+  .ILL_ListElemScroll::-webkit-scrollbar-thumb {
+	background: #0f172a;
+	padding: 1px;
+	border-radius: 100vh;
+  }
+  
+  .ILL_ListElemScroll::-webkit-scrollbar-thumb:hover {
+	background: #0f172a;
+  }

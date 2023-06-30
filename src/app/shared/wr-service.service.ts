@@ -16,16 +16,12 @@ export class WrServiceService {
   ) { 
     
   }
-  pb = new Pocketbase('https://139.144.183.80:433')
+  pb = new Pocketbase('https://pb.impossible-list.com')
 
   async submitWR(wr:WrSubmission) {
     let _wr = wr;
     _wr.status = 'pending';
-    _wr.submitted_at = Date.now();
-    _wr.$key = '';
-    let record = await this.pb.collection('wr_submissions').create(_wr)
-    _wr.$key = record.id
-    return this.pb.collection('wr_submissions').update(_wr.$key, _wr)
+    return await this.pb.collection('wr_submissions').create(_wr)
   }
 
   async getWRFromID(id:string) {
@@ -41,6 +37,6 @@ export class WrServiceService {
   }
 
   openWRPage(wr:WrSubmission) {
-    this.router.navigate(['/wr/'+wr.$key])
+    this.router.navigate(['/wr/'+wr.id])
   }
 }

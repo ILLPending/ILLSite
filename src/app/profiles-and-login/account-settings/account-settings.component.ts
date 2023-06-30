@@ -34,6 +34,8 @@ export class AccountSettingsComponent implements OnInit {
 
   buffer_user:Object | undefined;
 
+  _username_correct:boolean = true;
+
   i_gear = faGear;
 
   constructor(
@@ -59,6 +61,8 @@ export class AccountSettingsComponent implements OnInit {
       this.bil_bio = _usr['description'];
       this.bil_shownInLeaderboards = _usr['show_in_leaderboards'];
       this.bil_uid = _usr['uid'];
+    } else {
+      console.log('user not logged in');
     }
   }
 
@@ -109,9 +113,14 @@ export class AccountSettingsComponent implements OnInit {
       //gd username is empty
       this.bil_canContinue = true;
     }
-    if(this.bil_canContinue && this._user_uid) {
-      this.authService.pb.collection('users').update(this._user_uid, this.buffer_user)
-      this.router.navigate(["/"]);
+    if(this.bil_canContinue && this.authService.pb.authStore.model) {
+      let err = false;
+        console.log(this.authService.pb.authStore.model.id)
+        console.log(this._user_uid)
+        await this.authService.pb.collection('users').update(this.authService.pb.authStore.model.id, this.buffer_user)
+        if(!err) {
+          this.router.navigate(["/"]);
+        }
     }
   }
 
@@ -119,9 +128,19 @@ export class AccountSettingsComponent implements OnInit {
     this.bil_pfp_file = $event.target.files[0];
   }
 
+  async test() {
+    if(this.authService.pb.authStore.model) {
+      await this.authService.pb.collection('users').update(this.authService.pb.authStore.model.id, { username: 'jim' })
+    }
+  }
+
   
-  usernameChange($event:any) {
-    
+  usernameChange() {
+    if(this.bil_username && this.bil_username.includes(" ")) {
+      this._username_correct = false;
+    } else {
+      this._username_correct = true;
+    }
   }
 
   async updatePFP() {
@@ -139,9 +158,9 @@ export class AccountSettingsComponent implements OnInit {
         let record = await this.authService.pb.collection('users').getOne(this.authService.pb.authStore.model.id);
         console.log(record['avatar'])
         let _obj = {
-          avatar_url: `http://139.144.183.80:8090/api/files/_pb_users_auth_/${this._user_uid}/${record['avatar']}`
+          avatar_url: `https://pb.impossible-list.com/api/files/_pb_users_auth_/${this._user_uid}/${record['avatar']}`
         }
-        await this.authService.pb.collection('users').update(this._user_uid, _obj).catch((r) => console.log(r))
+        await this.authService.pb.collection('users').update(this._user_uid, _obj)
         this.bil_showUploadAnim = false;
       }
     } else {

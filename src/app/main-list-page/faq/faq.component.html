@@ -1,14 +1,21 @@
 <div class="mt-20 flex flex-col w-screen">
     <div class="flex flex-col justify-center items-center ILL_Scroll">
-        <div class="bg-slate-200 p-5 rounded-lg shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen">
-            <b class="text-2xl  font-normal text-center">Frequently Asked Questions</b>
-            <b class="font-light text-sm">Here are the answers to questions many people ask us</b>
+        <div class="flex lg:flex-row flex-col items-center justify-center">
+            <div class="bg-slate-200 p-5 rounded-3xl shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen">
+                <b class="text-2xl  font-semibold text-center">Frequently Asked Questions</b>
+                <b class="font-normal text-sm">Here are the answers to questions many people ask us</b>
+            </div>
+    
+            <div class="bg-slate-200 my-2 mx-2 p-5 rounded-3xl shadow-lg w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center">
+                <b class="font-normal text-center">Looking for the rules?</b>
+                <a routerLink="/rules" class="p-3 font-bold text-white bg-blue-500 rounded-full text-md hover:scale-105 transition-all duration-200"><fa-icon [icon]="i_rules" class="mx-1 text-xl"></fa-icon>Here they are</a>
+            </div>
         </div>
 
 
-        <div class="bg-slate-200 p-5 rounded-lg shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen my-4">
-            <b class="text-2xl  font-normal text-center">General questions</b>
-            <b class="font-light text-sm">Here are the answers to global questions about the list</b>
+        <div class="bg-slate-200 p-5 rounded-3xl shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen">
+            <b class="text-2xl  font-semibold text-center">General questions</b>
+            <b class="font-normal text-sm text-center">Here are the answers to global questions about the list</b>
         </div>
         <div class="flex flex-row flex-wrap xl:w-[1420px] mx-auto justify-center">
             <!-- FAQ Element -->
@@ -92,9 +99,9 @@
         </div>
 
 
-        <div class="bg-slate-200 p-5 rounded-lg shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen my-4">
-            <b class="text-2xl  font-normal text-center">Creator questions</b>
-            <b class="font-light text-sm">Here are the answers to questions from creators/future creators</b>
+        <div class="bg-slate-200 p-5 rounded-3xl shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen my-4">
+            <b class="text-2xl  font-semibold text-center">Creator questions</b>
+            <b class="font-normal text-sm text-center">Here are the answers to questions from creators/future creators</b>
         </div>
 
         <div class="flex flex-row flex-wrap xl:w-[1420px] mx-auto justify-center">
@@ -137,12 +144,25 @@
                     <b class="font-normal mt-4">If you are interested in the idea you can try it out and build an ILL level!</b>
                 </div>
             </div>
+
+            <div class="ILL_Faq_card overflow-hidden">
+                <div class="flex flex-row bg-pink-600 p-3 text-white text-center items-center">
+                    <fa-icon [icon]="i_question" class="mx-1 text-3xl"></fa-icon>
+                    <b class="text-xl font-semibold mx-auto my-0">How do levels get added to the ILL?</b>
+                </div>
+                <div class="flex flex-col p-3 text-lg">
+                    <b class="font-normal">Contrary to popular belief we don't just add every level that is impossible. We have a system of votes that determine whether a level is worthy to get placed.</b>
+                    <b class="font-normal mt-4">It starts with someone making a level and submitting it in our Discord server. If it's not a joke submission we place it in a quality control chat.</b>
+                    <b class="font-normal mt-4">The quality control chat is a place where 30+ people vote on whether they like it and want it placed, regardless of version.</b>
+                    <b class="font-normal mt-4">If the level gets 50% or more positive votes - it gets placed in pending tasks, which itself is a queue of levels the staff needs to playtest and fix before getting finally added to the ILL.</b>
+                </div>
+            </div>
         </div>
         
     <div class="flex flex-col items-center">
-        <div class="bg-slate-200 p-5 rounded-lg shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen">
-            <b class="text-2xl  font-normal text-center">Extended Information</b>
-            <b class="font-light text-sm text-center">Here is the document for extra information about the ILL</b>
+        <div class="bg-slate-200 p-5 rounded-3xl shadow-lg lg:w-fit dark:text-white dark:bg-slate-600 flex flex-col items-center w-screen">
+            <b class="text-2xl  font-semibold text-center">Extended Information</b>
+            <b class="font-normal text-sm text-center">Here is the document for extra information about the ILL</b>
         </div>
         <div class="lg:p-5 p-3 bg-slate-200 dark:bg-slate-600 ILL_Scroll rounded-lg shadow-lg lg:w-fit w-screen m-2">
            

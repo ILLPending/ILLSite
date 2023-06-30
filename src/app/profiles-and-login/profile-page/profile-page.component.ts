@@ -24,6 +24,7 @@ export class ProfilePageComponent implements OnInit {
   user_badges:string[] = [];
   user_wrs:any[] = [];
   user_wideshots:string[] = [];
+  _full_pfp_url:string = '';
 
   i_user = faUser;
   i_cup = faTrophy;
@@ -72,6 +73,11 @@ export class ProfilePageComponent implements OnInit {
         this.user_data = this.record_to_userdata(_temp_usr);
         this.getUserLevels();
         this.user_badges = _temp_usr['badges'].split(',');
+        if(_temp_usr['avatar_url'] != "") {
+          this._full_pfp_url = _temp_usr['avatar_url']
+        } else {
+          this._full_pfp_url = this.authService.pb.getFileUrl(_temp_usr, _temp_usr['avatar'])
+        }
       } else {
         this.found_user = false;
       }
@@ -105,6 +111,25 @@ export class ProfilePageComponent implements OnInit {
       let _temp_usr = await this.authService.getDataFromUID(_uid)
       if(_temp_usr) {
         _temp_usr['ill_verified'] = !_temp_usr['ill_verified'];
+        console.log(_temp_usr['id'], _uid);
+        await this.authService.pb.collection('users').update(_uid, _temp_usr)
+        this.getUser();
+      }
+    }
+  }
+
+  async toggleAdminPerms() {
+    let _uid = this.route.snapshot.paramMap.get('id');
+    console.log(_uid);
+    if(_uid) {
+      let _temp_usr = await this.authService.getDataFromUID(_uid)
+      if(_temp_usr) {
+        if(_temp_usr['permissions'] != 'listAdmin') {
+          _temp_usr['permissions'] = 'listAdmin';
+        } else {
+          
+          _temp_usr['permissions'] = 'member';
+        }
 
         await this.authService.pb.collection('users').update(_uid, _temp_usr)
         this.getUser();

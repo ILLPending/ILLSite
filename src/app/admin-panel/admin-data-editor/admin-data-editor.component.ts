@@ -206,25 +206,29 @@ export class AdminDataEditorComponent implements OnInit {
     if (confirm('Are you sure you want to Remap all level positions?')) {
       let _changes = 0;
       this.lb_editStatus = 'Re-mapping level positions...';
-      for (let i = 0; i < this.levelList.length; i++) {
-        console.log(this.levelList[i].position, '=>', i + 1); //compare
-        if (this.levelList[i].position != i + 1) {
+      let pseudo_list = this.levelList.sort((a, b) => {
+        return a.position - b.position;
+      })
+      console.log(pseudo_list);
+      for (let i = 0; i < pseudo_list.length; i++) {
+        console.log(pseudo_list[i].position, '=>', i + 1); //compare
+        if (pseudo_list[i].position != i + 1) {
           console.log(
-            'error in ' + this.levelList[i].name + "'s position... fixing..."
+            'error in ' + pseudo_list[i].name + "'s position... fixing..."
           );
-          this.levelList[i].position = i + 1;
-          console.log(this.levelList[i].position, '->', i + 1);
-          if (this.levelList[i].position != i + 1) {
+          pseudo_list[i].position = i + 1;
+          console.log(pseudo_list[i].position, '->', i + 1);
+          if (pseudo_list[i].position != i + 1) {
             console.log(
-              'Failed to fix ' + this.levelList[i].name + "'s level position"
+              'Failed to fix ' + pseudo_list[i].name + "'s level position"
             );
           } else {
             console.log(
               'Fixing of ' +
-                this.levelList[i].name +
+                pseudo_list[i].name +
                 ' complete... Updating level...'
             );
-            this.ill_service.updateLevel(this.levelList[i]);
+            this.ill_service.updateLevel(pseudo_list[i]);
             _changes++;
           }
         }
@@ -235,15 +239,6 @@ export class AdminDataEditorComponent implements OnInit {
 
   packageLevel() {
     this.lb_editStatus = 'Packaging level...';
-
-    //the funny
-    let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-
-    //generate ID
-    let _id = ''
-    for(let i=0; i<15; i++) {
-      _id = _id + alphabet[Math.round(Math.random() * alphabet.length)]
-    }
 
     //Packing normal values
     this.bil_packaged = {

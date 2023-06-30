@@ -32,13 +32,11 @@ export class WrSubmissionPageComponent implements OnInit {
   showSearchResults: boolean = false;
 
   bil_packagedWR: WrSubmission = {
-    $key: '',
     progress: '',
     level: '',
     level_name: '',
     status: '',
     submitted_by: '',
-    submitted_at: 0,
     isFromZero: false,
     video_url: ''
   }
@@ -110,11 +108,8 @@ export class WrSubmissionPageComponent implements OnInit {
     this.packageWR();
     if(uid) {
       this.bil_packagedWR.submitted_by = uid;
-      await this.wrService.submitWR(this.bil_packagedWR);
-      this.router.navigate(['/wr/'+this.bil_packagedWR.$key]);
+      let thing = await this.wrService.submitWR(this.bil_packagedWR);
+      this.router.navigate(['/wr/'+thing['id']]);
     }
   }
-
-  
-
 }

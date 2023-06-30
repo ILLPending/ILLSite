@@ -1,46 +1,74 @@
-<div class="mt-20 flex flex-col lg:w-[800px] w-screen lg:mx-auto mx-0 dark:text-white" *ngIf="bil_data && bil_show">
-    <div class="p-3 lg:m-auto m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col">
-        <video class="aspect-video w-[720px] rounded-xl" controls *ngIf="!bil_videoIsYoutube">
-            <source [src]="bil_data.video_url" type="video/mp4">
-        </video>
-        <iframe *ngIf="bil_videoIsYoutube" class="aspect-video lg:w-[720px] w-full rounded-xl" 
-        [src]="bil_yt_link" title="YouTube video player" frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <p class="font-semibold">Raw Footage: {{bil_data.raw_footage_url}}</p>
-    </div>
-    <div class="p-3 m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col">
-        <b class="text-lg">Level: {{bil_levelName}} by {{bil_creatorName}}</b>
-        <div class="flex flex-row items-center">
-            Submitted by:
-            <a class="flex flex-row items-center w-fit xl:bg-slate-200 xl:dark:bg-slate-800 xl:rounded-lg 
-            xl:font-bold xl:shadow-lg transition-all duration-300 hover:scale-105 m-1 p-1" *ngIf="bil_sumbitter" routerLink="/profile/{{bil_sumbitter.uid}}">
-                <fa-icon [icon]="i_link" class="mx-1"></fa-icon>
-                <img [src]="bil_sumbitter.avatar_url" class="w-[24px] aspect-square rounded-full m-1">
-                {{bil_sumbitter.username}}
-            </a> 
+<div class="mt-20 flex flex-col items-stret w-fit lg:mx-auto mx-0 dark:text-white" *ngIf="bil_data && bil_show">
+    <div class="flex flex-col m-3 items-center justify-center rounded-xl bg-slate-300 dark:bg-slate-700 p-5">
+        <p class="font-bold mx-2 text-lg">{{bil_levelName}}</p>
+        <p class="font-semibold mx-2 text-lg">by {{bil_creatorName}}</p>
+        <div class="flex flex-row w-full">
+            <div class="w-full m-2 h-5 rounded-full bg-slate-800">
+                <!-- w is for the percentage that was the run (end% - start%), ml is the offset from start (start%) -->
+                <div class="h-full from-blue-500 to-blue-700 bg-gradient-to-r rounded-full"
+                [style.marginLeft]="bil_run_start+'%'" [style.width]="bil_run_total+'%'">
+                </div>
+            </div>
+            <p class="font-bold mx-2 text-lg">{{bil_data.progress}}</p>
         </div>
-        <b class="italic">Run: {{bil_data.progress}}</b>
-        <div class="m-2 h-3 rounded-full bg-slate-800">
-            <!-- w is for the percentage that was the run (end% - start%), ml is the offset from start (start%) -->
-            <div class="h-full from-blue-500 to-blue-700 bg-gradient-to-r rounded-full"
-            [style.marginLeft]="bil_run_start+'%'" [style.width]="bil_run_total+'%'">
+    </div>
+
+    <div class="flex lg:flex-row flex-col">
+        <div class="flex flex-col">
+            <div class="p-3 m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col">
+                <video class="aspect-video w-[720px] rounded-xl" controls *ngIf="!bil_videoIsYoutube">
+                    <source [src]="bil_data.video_url" type="video/mp4">
+                </video>
+                <iframe *ngIf="bil_videoIsYoutube" class="aspect-video lg:w-[720px] w-full rounded-xl" 
+                [src]="bil_yt_link" title="YouTube video player" frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                
+            </div>
+            <div class="p-3 m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col">
+                <p class="font-semibold">Comment/Raw footage/Contact:</p>
+                <p class="font-normal">{{bil_data.raw_footage_url}}</p>
             </div>
         </div>
-        <div class="flex flex-row items-center">
-            <b>Status:</b>
-            <b class="p-2 m-1 text-white rounded-xl bg-slate-500" *ngIf="bil_status == 'pending'">Pending</b>
-            <b class="p-2 m-1 text-white rounded-xl bg-green-500" *ngIf="bil_status == 'Approved'">Approved</b>
-            <b class="p-2 m-1 text-white rounded-xl bg-red-500" *ngIf="bil_status == 'Rejected'">Rejected</b>
+        <div class="flex flex-col">
+            <div class="p-3 m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col">
+                <b class="font-semibold">Level: {{bil_levelName}} by {{bil_creatorName}}</b>
+                <div class="flex flex-row items-center">
+                    Submitted by:
+                    <a class="flex flex-row items-center w-fit xl:bg-slate-200 xl:dark:bg-slate-800 xl:rounded-lg 
+                    xl:font-bold xl:shadow-lg transition-all duration-300 hover:scale-105 m-1 p-1" *ngIf="bil_sumbitter" routerLink="/profile/{{bil_sumbitter.uid}}">
+                        <fa-icon [icon]="i_link" class="mx-1"></fa-icon>
+                        <img [src]="bil_sumbitter.avatar_url" class="w-[24px] aspect-square rounded-full m-1">
+                        {{bil_sumbitter.username}}
+                    </a> 
+                </div>
+                <b class="italic">Run: {{bil_data.progress}}</b>
+                <div class="m-2 h-3 rounded-full bg-slate-800">
+                    <!-- w is for the percentage that was the run (end% - start%), ml is the offset from start (start%) -->
+                    <div class="h-full from-blue-500 to-blue-700 bg-gradient-to-r rounded-full"
+                    [style.marginLeft]="bil_run_start+'%'" [style.width]="bil_run_total+'%'">
+                    </div>
+                </div>
+                <div class="flex flex-row items-center">
+                    <b>Status:</b>
+                    <b class="p-2 m-1 text-white rounded-xl bg-slate-500" *ngIf="bil_status == 'pending'">Pending</b>
+                    <b class="p-2 m-1 text-white rounded-xl bg-green-500" *ngIf="bil_status == 'Approved'">Approved</b>
+                    <b class="p-2 m-1 text-white rounded-xl bg-red-500" *ngIf="bil_status == 'Rejected'">Rejected</b>
+                </div>
+                <b *ngIf="bil_status == 'Rejected'" class="font-semibold bg-red-800 text-white p-3 rounded-lg">Reason: {{bil_data.reject_reason}}</b>
+            </div>
+            <div class="p-3 m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col" *ngIf="auth_service.user$ | async as user">
+                <div class="flex flex-col w-full" *ngIf="user['permissions'] == 'listAdmin'">
+                    <button (click)="approveWR()" class="m-2 p-2 bg-green-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" >Approve WR</button>
+                    <button (click)="rejectWR()" class="m-2 p-2 bg-red-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" >Reject WR</button>
+                    <input class="rounded-xl border-l-4 border-blue-500 p-2 m-2 text-black" [(ngModel)]="adm_rejectReason" type="text" placeholder="Insert reason for rejection"/>
+                </div>
+            </div>
         </div>
-        <b *ngIf="bil_status == 'Rejected'" class="font-normal">Reason: {{bil_data.reject_reason}}</b>
     </div>
-    <div class="p-3 m-3 rounded-xl bg-slate-300 dark:bg-slate-700 flex flex-col" *ngIf="auth_service.user$ | async as user">
-        <div class="flex flex-col w-full" *ngIf="user['permissions'] == 'listAdmin'">
-            <button (click)="approveWR()" class="m-2 p-2 bg-green-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" >Approve WR</button>
-            <button (click)="rejectWR()" class="m-2 p-2 bg-red-500 text-white rounded-lg shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200" >Reject WR</button>
-            <input class="rounded-xl border-l-4 border-blue-500 p-2 m-2 text-black" [(ngModel)]="adm_rejectReason" type="text" placeholder="Insert reason for rejection"/>
-        </div>
-    </div>
+</div>
+
+<div class="h-20">
+
 </div>
 
 <div *ngIf="!found_wr" class="mt-20 text-3xl dark:text-white text-center p-5 mx-auto bg-slate-300 dark:bg-slate-800 flex flex-col items-center w-fit rounded-xl">

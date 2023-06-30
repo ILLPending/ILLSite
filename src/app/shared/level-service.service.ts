@@ -9,7 +9,7 @@ export class LevelServiceService {
   constructor() {
   }
 
-  pb = new Pocketbase('https://139.144.183.80:433')
+  pb = new Pocketbase('https://pb.impossible-list.com')
 
 
   getEntireLevelList() {

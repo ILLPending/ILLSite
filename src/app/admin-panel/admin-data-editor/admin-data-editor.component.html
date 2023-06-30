@@ -60,13 +60,13 @@
     
     
                 <b>World records:</b>
+                <div class="flex flex-row items-center my-1">
+                    <b class="mx-1 font-normal w-52">WR minimum percentage:</b>
+                    <input [(ngModel)]="bil_wr_min" class="ILL_TextField w-full" type="text" placeholder="Minimum percentage for WR without % and > "/>
+                </div>
                 <div class="flex flex-row items-center">
                     <input [(ngModel)]="bil_manualWR" class="rounded-full w-8 h-8" type="checkbox"/>
                     <b class="mx-1 font-normal">Use manual WR system</b>
-                </div>
-                <div class="flex flex-row items-center my-1">
-                    <b class="mx-1 font-normal w-52">WR minimum:</b>
-                    <input [disabled]="!bil_manualWR" [(ngModel)]="bil_wr_min" class="ILL_TextField w-full" type="text" placeholder="Minimum percentage for WR without % and > "/>
                 </div>
                 <div class="flex flex-row items-center my-1">
                     <b class="mx-1 font-normal w-52">World record:</b>

@@ -19,7 +19,7 @@ export class AuthService {
       
     }
     
-  pb = new Pocketbase('https://139.144.183.80:433')
+  pb = new Pocketbase('https://pb.impossible-list.com')
   user$ = of(this.pb.authStore.model)
   initAuth() {
     this.pb.authStore.onChange((auth) => {
@@ -73,12 +73,21 @@ export class AuthService {
   }
 
   async getAllUsers() {
-    return this.pb.collection('users').getFullList<UserData>(200);
+    return this.pb.collection('users').getFullList<UserData>(200, {sort: 'username'});
   }
 
   async getDataFromGDUsername(username: string) {
     try {
       return await this.pb.collection('users').getFirstListItem<UserData>('gd_username = "'+username+'"', { $autoCancel: false })
+    } catch (err) {
+      console.log(err)
+      return null;
+    }
+  }
+
+  async getDataFromGDUsernameUnscoped(username: string) {
+    try {
+      return await this.pb.collection('users').getFirstListItem('gd_username = "'+username+'"', { $autoCancel: false })
     } catch (err) {
       console.log(err)
       return null;
