@@ -6,18 +6,20 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 *Impossible Level List full stack repo for our favorite GD impossible level enjoyers*
 
 # Introduction
-I am MateussDev. You may know me for making Noclipped or building some levels in Geometry Dash, like Madness by me and sequoia
-Here I decided to be more useful to the ILL community, so I started the development of the website version of the Impossible Level List
-
-This list should be a simple excercise for making database-driven web apps similar to Pointercrate, but with my own twists and ticks
-
-Progress coming soon! :)
+We are here to restore and remaster the ILL website :D
 
 # Dev Members
-- MateussDev (Lead fullstack dev)
-- Electro (Lead backend dev)
+- peony (Frontend and Backend dev)
+- MateussDev (Frontend dev)
+- Yang (Backend dev)
+- KrX (Backend dev)
 - AuraXalaiv (Lead artist)
 - Doki (Project Manager and Mafia boss)
+
+# Tools
+Sveltekit
+Rocket backend
+Rust ig?
 
 # Oh yeah
 ![e588cd478d291f02900f27988606fbf9](https://user-images.githubusercontent.com/101806154/221628951-d480cd9b-06d9-49eb-ab2a-9778e20a716b.png)
